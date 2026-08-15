@@ -1,0 +1,4 @@
+C:\Users\artik\Downloads\candy crush\obj\Debug\net8.0-windows\CandyCrushAccessible.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\artik\Downloads\candy crush\obj\Debug\net8.0-windows\CandyCrushAccessible.AssemblyInfoInputs.cache
+C:\Users\artik\Downloads\candy crush\obj\Debug\net8.0-windows\CandyCrushAccessible.AssemblyInfo.cs
+C:\Users\artik\Downloads\candy crush\obj\Debug\net8.0-windows\CandyCrushAccessible.csproj.CoreCompileInputs.cache

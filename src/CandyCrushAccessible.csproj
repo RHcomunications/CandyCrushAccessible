@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <PlatformTarget>x64</PlatformTarget>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>CandyCrushAccessible</AssemblyName>
+    <RootNamespace>CandyCrushAccessible</RootNamespace>
+    <ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Company>Narayan Projects</Company>
+    <Product>Candy Crush Accesible</Product>
+    <Description>Clon 100% accesible de Candy Crush Saga (Edición 2012) con audio binaural.</Description>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.2026.0814</AssemblyVersion>
+    <FileVersion>1.0.2026.0814</FileVersion>
+    <OutputPath>..\bin\$(Configuration)\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="native\bass.dll" CopyToOutputDirectory="PreserveNewest" Link="bass.dll" />
+    <None Include="native\nvdaControllerClient32.dll" CopyToOutputDirectory="PreserveNewest" Link="nvdaControllerClient32.dll" />
+    <None Include="native\nvdaControllerClient64.dll" CopyToOutputDirectory="PreserveNewest" Link="nvdaControllerClient64.dll" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\sounds\*.mp3">
+      <LogicalName>$(RootNamespace).sounds.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\music\*.mp3">
+      <LogicalName>$(RootNamespace).music.%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+</Project>

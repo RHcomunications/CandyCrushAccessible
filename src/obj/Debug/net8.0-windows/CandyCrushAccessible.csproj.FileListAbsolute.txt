@@ -1,0 +1,17 @@
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\CandyCrushAccessible.exe
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\CandyCrushAccessible.deps.json
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\CandyCrushAccessible.runtimeconfig.json
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\CandyCrushAccessible.dll
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\CandyCrushAccessible.pdb
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.AssemblyInfoInputs.cache
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.AssemblyInfo.cs
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.csproj.CoreCompileInputs.cache
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.dll
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\refint\CandyCrushAccessible.dll
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.pdb
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.genruntimeconfig.cache
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\ref\CandyCrushAccessible.dll
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\bass.dll
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\nvdaControllerClient32.dll
+C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\nvdaControllerClient64.dll
