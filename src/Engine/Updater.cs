@@ -21,18 +21,21 @@ namespace CandyCrushAccessible.Engine
         public static string GetLocalVersionString()
         {
             var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            return $"{v.Major}.{v.Minor}.{v.Build}";
+            int build = v.Build >= 0 ? v.Build : 0;
+            return $"{v.Major}.{v.Minor}.{build}";
         }
 
-        public static bool CheckConnection()
+        public static async Task<bool> CheckConnectionAsync()
         {
             try
             {
                 using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(3) })
                 {
                     client.DefaultRequestHeaders.Add("User-Agent", "CandyCrushAccessible-Updater");
-                    var response = client.Send(new HttpRequestMessage(HttpMethod.Head, "https://github.com"));
-                    return response.IsSuccessStatusCode;
+                    using (var response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Head, "https://github.com")))
+                    {
+                        return response.IsSuccessStatusCode;
+                    }
                 }
             }
             catch (Exception ex)
@@ -44,7 +47,7 @@ namespace CandyCrushAccessible.Engine
 
         public static async Task<UpdateInfo> CheckForUpdatesAsync()
         {
-            if (!CheckConnection()) return null;
+            if (!await CheckConnectionAsync()) return null;
             try
             {
                 using (var client = new HttpClient())

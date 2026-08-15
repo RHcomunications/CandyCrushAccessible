@@ -109,6 +109,7 @@ namespace CandyCrushAccessible.UI
             SoundEngine.VoiceVolume = _progress.VoiceVolume;
             Speech.Initialize();
             Localization.Current = _progress.LanguageSpanish ? Language.Spanish : Language.English;
+            _timer.Start();
 
             CheckUpdateAvailableOnStartup();
         }
@@ -161,14 +162,6 @@ namespace CandyCrushAccessible.UI
         {
             _screen = s;
             _timeWarningPlayed = false;
-            if (s == GameScreen.Playing)
-            {
-                _timer.Enabled = _board != null && _board.Level.Type == LevelType.Timed;
-            }
-            else
-            {
-                _timer.Enabled = false;
-            }
             if (s == GameScreen.MainMenu)
             {
                 SoundEngine.PlayMusic(MusicTrack.Menu);
@@ -190,7 +183,7 @@ namespace CandyCrushAccessible.UI
                 _progress.Save();
                 Speech.Speak(Localization.Get("lives.count") + " " + _progress.Lives);
             }
-            if (_screen != GameScreen.Playing || _board == null) return;
+            if (_screen != GameScreen.Playing || _board == null || _board.Level.Type != LevelType.Timed) return;
             _board.UpdateTime(0.25);
             if (_board.TimeLeft <= 10 && _board.TimeLeft > 0 && !_timeWarningPlayed)
             {
@@ -717,7 +710,7 @@ namespace CandyCrushAccessible.UI
                     Speech.SpeakInterrupt(string.Format(Localization.Get("row.read"), _cursorY + 1, _board.DescribeRow(_cursorY)));
                     break;
                 case Keys.G:
-                    Speech.SpeakInterrupt(string.Format(Localization.Get("column.read"), _cursorX + 1, _board.DescribeColumn(_cursorX)));
+                    Speech.SpeakInterrupt(string.Format(Localization.Get("column.read"), Board.ColLetter(_cursorX), _board.DescribeColumn(_cursorX)));
                     break;
                 case Keys.H:
                     ShowHint();
@@ -1354,7 +1347,7 @@ namespace CandyCrushAccessible.UI
                 case Keys.NumPad1:
                     if (_tutorialPage == 2)
                     {
-                        Speech.SpeakInterrupt(Localization.Get("striped"));
+                        Speech.SpeakInterrupt(Localization.Get("special.striped"));
                         SoundEngine.PlayLineBlastSweep(3, 4, true);
                     }
                     break;
@@ -1362,7 +1355,7 @@ namespace CandyCrushAccessible.UI
                 case Keys.NumPad2:
                     if (_tutorialPage == 2)
                     {
-                        Speech.SpeakInterrupt(Localization.Get("wrapped"));
+                        Speech.SpeakInterrupt(Localization.Get("special.wrapped"));
                         SoundEngine.PlayWrappedExplosion(3, 4);
                     }
                     break;
@@ -1370,7 +1363,7 @@ namespace CandyCrushAccessible.UI
                 case Keys.NumPad3:
                     if (_tutorialPage == 2)
                     {
-                        Speech.SpeakInterrupt(Localization.Get("colorbomb"));
+                        Speech.SpeakInterrupt(Localization.Get("special.colorbomb"));
                         SoundEngine.PlayColorBombSweep(3, 4);
                     }
                     break;

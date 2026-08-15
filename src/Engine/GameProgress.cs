@@ -294,8 +294,9 @@ namespace CandyCrushAccessible.Engine
             }
             UpdateLives();
             if (Lives <= 0) return false;
+            bool wasFull = Lives >= 5;
             Lives--;
-            if (Lives < 5)
+            if (wasFull)
             {
                 LivesRegenDue = DateTime.UtcNow.AddSeconds(LivesRegenSeconds);
             }

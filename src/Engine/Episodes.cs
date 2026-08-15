@@ -36,9 +36,13 @@ namespace CandyCrushAccessible.Engine
 
         public static EpisodeDefinition GetForLevel(int levelNumber)
         {
-            int epNum = (levelNumber - 1) / LevelsPerEpisode + 1;
-            if (epNum <= All.Length) return All[epNum - 1];
-            int start = (epNum - 1) * LevelsPerEpisode + 1;
+            foreach (var ep in All)
+            {
+                if (levelNumber >= ep.StartLevel && levelNumber <= ep.EndLevel)
+                    return ep;
+            }
+            int epNum = 8 + (levelNumber - (Levels.TotalLevels + 1)) / LevelsPerEpisode;
+            int start = (Levels.TotalLevels + 1) + (epNum - 8) * LevelsPerEpisode;
             return new EpisodeDefinition { Number = epNum, StartLevel = start, EndLevel = start + LevelsPerEpisode - 1, NameKey = null };
         }
 
@@ -54,7 +58,8 @@ namespace CandyCrushAccessible.Engine
 
         public static bool IsEndLevel(int levelNumber)
         {
-            return levelNumber % LevelsPerEpisode == 0;
+            var ep = GetForLevel(levelNumber);
+            return levelNumber == ep.EndLevel;
         }
 
         public static string GeneratedName(int num)

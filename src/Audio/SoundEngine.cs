@@ -72,7 +72,7 @@ namespace CandyCrushAccessible.Audio
         public static void Shutdown()
         {
             if (!_initialized) return;
-            StopMusic();
+            StopAll();
             BASS_Free();
             _initialized = false;
         }
@@ -199,15 +199,23 @@ namespace CandyCrushAccessible.Audio
             {
                 ActiveStreams.Add(h);
             }
-            SyncProc proc = delegate(int handle, int channel, int data, IntPtr user)
+            SyncProc proc = null;
+            proc = delegate(int handle, int channel, int data, IntPtr user)
             {
                 BASS_StreamFree(handle);
                 lock (ActiveStreams)
                 {
                     ActiveStreams.Remove(handle);
                 }
+                lock (SyncDelegates)
+                {
+                    SyncDelegates.Remove(proc);
+                }
             };
-            SyncDelegates.Add(proc);
+            lock (SyncDelegates)
+            {
+                SyncDelegates.Add(proc);
+            }
             BASS_ChannelSetSync(h, BASS_SYNC_END, 0, proc, IntPtr.Zero);
         }
 
@@ -227,15 +235,23 @@ namespace CandyCrushAccessible.Audio
             {
                 ActiveStreams.Add(h);
             }
-            SyncProc proc = delegate(int handle, int channel, int data, IntPtr user)
+            SyncProc proc = null;
+            proc = delegate(int handle, int channel, int data, IntPtr user)
             {
                 BASS_StreamFree(handle);
                 lock (ActiveStreams)
                 {
                     ActiveStreams.Remove(handle);
                 }
+                lock (SyncDelegates)
+                {
+                    SyncDelegates.Remove(proc);
+                }
             };
-            SyncDelegates.Add(proc);
+            lock (SyncDelegates)
+            {
+                SyncDelegates.Add(proc);
+            }
             BASS_ChannelSetSync(h, BASS_SYNC_END, 0, proc, IntPtr.Zero);
         }
 
@@ -444,6 +460,11 @@ namespace CandyCrushAccessible.Audio
         
         public static void StopAll()
         {
+            if (_duckTimer != null)
+            {
+                _duckTimer.Dispose();
+                _duckTimer = null;
+            }
             lock (ActiveStreams)
             {
                 foreach (int h in ActiveStreams)
@@ -452,6 +473,10 @@ namespace CandyCrushAccessible.Audio
                     BASS_StreamFree(h);
                 }
                 ActiveStreams.Clear();
+            }
+            lock (SyncDelegates)
+            {
+                SyncDelegates.Clear();
             }
             StopMusic();
         }

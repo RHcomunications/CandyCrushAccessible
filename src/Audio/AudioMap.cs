@@ -103,7 +103,7 @@ namespace CandyCrushAccessible.Audio
             {"lose", "button-press.mp3"},
             {"colorbomb_created", "striped-candy-created1.mp3"},
             {"wrapped_created", "striped-candy-created1.mp3"},
-            {"supercolorbomb", "colorbomb_created"},
+            {"supercolorbomb", "colour-bomb-created.mp3"},
             {"ingredient", "candy-land1.mp3"},
             {"ingredient2", "candy-land1.mp3"},
             {"square", "swoosh-ut.mp3"},
