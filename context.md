@@ -112,6 +112,13 @@ src/
    - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0.2-08.15.2026 publicada formalmente con el paquete de descarga unificado autocontenido `CandyCrushAccessible-v1.0.2-Standalone.zip`.
    - Script de actualización `update.cmd` blindado con captura de ruta `exePath`, espera de 3 segundos, registro de salida en `update_log.txt` y pausa interactiva ante fallos.
 
+9. **Auditoría Exhaustiva de Código y Optimización**:
+   - **Gestión de Memoria en `SoundEngine.cs`**: Liberación inmediata de punteros delegados `SyncProc` en `SyncDelegates` al concluir la reproducción del audio (`BASS_SYNC_END`), erradicando fugas de memoria en sesiones largas.
+   - **Regeneración de Vidas en Tiempo Real (`MainWindow.cs` & `GameProgress.cs`)**: El temporizador de interfaz ahora permanece activo en todas las pantallas (menú, opciones, tienda, mapa) permitiendo la regeneración de vidas de fondo sin reiniciar el tiempo restante ya acumulado.
+   - **Actualizador Asíncrono no Bloqueante (`Updater.cs`)**: `CheckConnectionAsync()` migrado a `HttpClient.SendAsync` sin congelar el hilo principal de la UI.
+   - **Lógica de Episodios y Finalización (`Episodes.cs`)**: Corrección del cálculo para niveles procedurales (>=66) y detección exacta de fin de episodio (`IsEndLevel`) para el Nivel 65 del Valle del Malvavisco.
+   - **Localización y Lectura de Tablero (`Localization.cs` & `MainWindow.cs`)**: Claves de demostración del tutorial (`special.striped`, `special.wrapped`, `special.colorbomb`) y lectura fonética de columnas por letras (A-H).
+
 ---
 
 ## Estado de Certificación Final
