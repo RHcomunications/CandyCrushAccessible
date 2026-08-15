@@ -121,6 +121,38 @@ src/
 
 ---
 
+## Regla de Oro: Esquema Oficial de Versionado Semántico (SemVer) y Despliegues
+
+Para todas las versiones futuras (parches de sonido, correcciones, eventos festivos o grandes expansiones), se mantendrá obligatoriamente la regla de oro:
+
+### Formato de Etiquetado: `vMayor.Menor.Parche-MM.DD.AAAA`
+
+| Tipo de Lanzamiento | Cuándo Usarlo | Ejemplo de Etiqueta (Tag) | Ejemplo de Título de Release |
+|---|---|---|---|
+| **Hotfixes / Parches Menores** | Arreglos de sonido, pulido de efectos, textos o bugs | `v1.1.1-08.16.2026`<br>`v1.1.2-08.20.2026` | *Candy Crush Accesible v1.1.1 (Audio Polish)* |
+| **Eventos / Contenido Temático** | Niveles especiales (Navidad, Halloween, etc.), nuevos episodios, modos | `v1.2.0-12.24.2026`<br>`v1.3.0-04.05.2027` | *Candy Crush Accesible v1.2.0 (Especial Navideño 🎄)* |
+| **Grandes Expansiones (V2)** | Nuevo motor, multijugador, overhaul gráfico/sonoro | `v2.0.0-08.14.2027` | *Candy Crush Accesible 2.0 (Anniversary Edition)* |
+
+### Protocolo de Despliegue en 3 Pasos:
+1. **Actualizar `CandyCrushAccessible.csproj`**:
+   Mantener `<AssemblyVersion>` y `<FileVersion>` limpios en 4 dígitos semánticos (`Mayor.Menor.Parche.0`), evitando años o fechas en estos campos:
+   ```xml
+   <Version>1.2.0</Version>
+   <AssemblyVersion>1.2.0.0</AssemblyVersion>
+   <FileVersion>1.2.0.0</FileVersion>
+   ```
+2. **Compilar y Empaquetar Standalone**:
+   ```powershell
+   & "$env:LOCALAPPDATA\dotnet\dotnet.exe" publish "src\CandyCrushAccessible.csproj" -c Release -r win-x64 --self-contained true -o "bin\Publish_Standalone"
+   Compress-Archive -Path "bin\Publish_Standalone\*" -DestinationPath "CandyCrushAccessible-v1.2.0-Standalone.zip" -Force
+   ```
+3. **Publicar en GitHub Release**:
+   ```powershell
+   gh release create v1.2.0-12.24.2026 "CandyCrushAccessible-v1.2.0-Standalone.zip" --title "Candy Crush Accesible v1.2.0 (Especial Navideño)" --notes "Notas del parche..."
+   ```
+
+---
+
 ## Estado de Certificación Final
 
 - **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
