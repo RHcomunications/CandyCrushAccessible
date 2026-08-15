@@ -109,7 +109,8 @@ src/
 8. **Manifiesto y Despliegue de Gala (`README.md` & GitHub Release)**:
    - `CandyCrushAccessible.csproj` firmado con metadatos oficiales de **Narayan Projects**.
    - `README.md` bilingüe creado en la raíz del proyecto.
-   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0-08.14.2026 publicada formalmente con el paquete de descarga unificado autocontenido `CandyCrushAccessible-v1.0-Standalone.zip`.
+   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0.2-08.15.2026 publicada formalmente con el paquete de descarga unificado autocontenido `CandyCrushAccessible-v1.0.2-Standalone.zip`.
+   - Script de actualización `update.cmd` blindado con captura de ruta `exePath`, espera de 3 segundos, registro de salida en `update_log.txt` y pausa interactiva ante fallos.
 
 ---
 
