@@ -186,7 +186,7 @@ namespace CandyCrushAccessible.Engine
             {"msg.ingredient.arrive", "Ingrediente en la parte inferior. ¡Recógelo!"},
             {"msg.board", "Tablero"},
 
-            {"hint.nav", "Flechas o WASD para moverte. Intro selecciona. C repite. R estado. B tablero. T fila. G columna. H consejo. L martillo. F1 consejo del Señor Toffee. P pausa"},
+            {"hint.nav", "Flechas o WASD para moverte. Intro selecciona. C repite. R estado. V vidas. Tab potenciadores. B tablero. T fila. G columna. H consejo. L martillo. F1 consejo del Señor Toffee. P pausa"},
 
             {"tutorial.title", "Tutorial"},
             {"tutorial.page1", "Página 1 de 4. En el tablero, mueve el cursor con las flechas o WASD. Al moverte escucharás el color de cada caramelo y un sonido que sube o baja según la columna. Pulso de caramelo: mismo color más grave o agudo según la posición."},
@@ -324,6 +324,18 @@ namespace CandyCrushAccessible.Engine
             {"booster.plus.time", "¡Más quince segundos!"},
             {"extra.moves.purchased", "¡Compraste {0} movimientos extra!"},
             {"hammer.used", "¡Martillo! Destruiste el caramelo en {0}"},
+            {"lives.max", "Vidas: {0}. Al máximo."},
+            {"lives.next", "Vidas: {0}. Siguiente en {1} minutos y {2} segundos."},
+            {"booster.panel.open", "Panel de potenciadores abierto en {0}."},
+            {"booster.panel.closed", "Panel cerrado."},
+            {"booster.panel.empty", "No tienes potenciadores."},
+            {"booster.colorbomb.placed", "¡Bomba de color colocada en {0}!"},
+            {"booster.jellyfish.placed", "¡Peces de gelatina invocados en {0}!"},
+            {"desc.hammer", "Destruye cualquier caramelo u obstáculo en la casilla actual."},
+            {"desc.colorbomb", "Transforma el caramelo de la casilla actual en una Bomba de Color."},
+            {"desc.jellyfish", "Invoca peces de gelatina desde la casilla actual."},
+            {"desc.extramoves", "Añade 5 movimientos extra a la partida."},
+            {"desc.extratime", "Añade 15 segundos extra a la partida."},
 
             {"shop.title", "Tienda"},
             {"shop.gold", "Lingotes: {0} | Monedas: {1}"},
@@ -345,7 +357,7 @@ namespace CandyCrushAccessible.Engine
             {"shop.notenough", "Lingotes insuficientes ({0} lingotes requeridos)"},
             {"shop.coins.notenough", "Monedas insuficientes. Gana más jugando niveles"},
             {"shop.collect", "Recoger"},
-            {"shop.daily.wait", "Disponible en {0} min"},
+            {"shop.daily.wait", "Disponible en {0}h y {1}m"},
             {"shop.daily.collected", "¡Bono diario recogido! +5 Lingotes y +50 Monedas"}
         };
 
@@ -468,7 +480,7 @@ namespace CandyCrushAccessible.Engine
             {"msg.ingredient.arrive", "Ingredient at the bottom. Collect it!"},
             {"msg.board", "Board"},
 
-            {"hint.nav", "Arrows or WASD to move. Enter selects. C repeats. R status. B board. T row. G column. H hint. L hammer. F1 Mr. Toffee tip. P pause"},
+            {"hint.nav", "Arrows or WASD to move. Enter selects. C repeats. R status. V lives. Tab boosters. B board. T row. G column. H hint. L hammer. F1 Mr. Toffee tip. P pause"},
 
             {"tutorial.title", "Tutorial"},
             {"tutorial.page1", "Page 1 of 4. On the board, move the cursor with the arrows or WASD. As you move, you will hear each candy color and a sound that goes up or down depending on the column."},
@@ -606,6 +618,18 @@ namespace CandyCrushAccessible.Engine
             {"booster.plus.time", "Plus fifteen seconds!"},
             {"extra.moves.purchased", "Purchased {0} extra moves!"},
             {"hammer.used", "Hammer! You smashed the candy at {0}"},
+            {"lives.max", "Lives: {0}. At maximum."},
+            {"lives.next", "Lives: {0}. Next in {1} minutes and {2} seconds."},
+            {"booster.panel.open", "Booster panel open at {0}."},
+            {"booster.panel.closed", "Panel closed."},
+            {"booster.panel.empty", "You have no boosters."},
+            {"booster.colorbomb.placed", "Color bomb placed at {0}!"},
+            {"booster.jellyfish.placed", "Jelly fish spawned at {0}!"},
+            {"desc.hammer", "Destroys any candy or obstacle at the current cell."},
+            {"desc.colorbomb", "Transforms the candy at the current cell into a Color Bomb."},
+            {"desc.jellyfish", "Spawns jelly fish from the current cell."},
+            {"desc.extramoves", "Adds 5 extra moves to the game."},
+            {"desc.extratime", "Adds 15 extra seconds to the game."},
 
             {"shop.title", "Shop"},
             {"shop.gold", "Gold Bars: {0} | Coins: {1}"},
@@ -627,7 +651,7 @@ namespace CandyCrushAccessible.Engine
             {"shop.notenough", "Not enough gold bars ({0} gold bars required)"},
             {"shop.coins.notenough", "Not enough coins. Earn more by playing levels"},
             {"shop.collect", "Collect"},
-            {"shop.daily.wait", "Available in {0} min"},
+            {"shop.daily.wait", "Available in {0}h and {1}m"},
             {"shop.daily.collected", "Daily bonus collected! +5 Gold Bars and +50 Coins"}
         };
 

@@ -48,6 +48,10 @@ namespace CandyCrushAccessible.UI
         private bool _timeWarningPlayed;
         private readonly System.Windows.Forms.Timer _timer;
 
+        private bool _boosterPanelActive = false;
+        private int _boosterPanelIndex = 0;
+        private readonly List<BoosterType> _ownedBoosters = new List<BoosterType>();
+
         private readonly string[] MainMenuItems =
         {
             "mainmenu.play", "mainmenu.shop", "mainmenu.tutorial", "mainmenu.options", "mainmenu.quit"
@@ -312,6 +316,9 @@ namespace CandyCrushAccessible.UI
                         Speech.Speak(Localization.Get("menu.level") + " " + (_mapIndex + 1) + ". " + Localization.Get("msg.no"));
                     }
                     break;
+                case Keys.V:
+                    AnnounceLivesRealtime();
+                    break;
                 case Keys.Escape:
                 case Keys.Back:
                     SwitchScreen(GameScreen.MainMenu);
@@ -496,8 +503,9 @@ namespace CandyCrushAccessible.UI
                 }
                 else
                 {
-                    int mins = (int)Math.Ceiling(remaining / 60.0);
-                    Speech.SpeakInterrupt(Localization.Get("shop.daily") + ". " + string.Format(Localization.Get("shop.daily.wait"), mins) + ". " + balances);
+                    TimeSpan t = TimeSpan.FromSeconds(remaining);
+                    string waitText = string.Format(Localization.Get("shop.daily.wait"), (int)t.TotalHours, t.Minutes);
+                    Speech.SpeakInterrupt(Localization.Get("shop.daily") + ". " + waitText + ". " + balances);
                 }
             }
         }
@@ -606,8 +614,9 @@ namespace CandyCrushAccessible.UI
                         {
                             SoundEngine.PlaySound("shop_error");
                             double remaining = _progress.DailyBonusTimeRemaining();
-                            int mins = (int)Math.Ceiling(remaining / 60.0);
-                            Speech.Speak(string.Format(Localization.Get("shop.daily.wait"), mins));
+                            TimeSpan t = TimeSpan.FromSeconds(remaining);
+                            string waitText = string.Format(Localization.Get("shop.daily.wait"), (int)t.TotalHours, t.Minutes);
+                            Speech.Speak(waitText);
                         }
                     }
                     Invalidate();
@@ -653,8 +662,9 @@ namespace CandyCrushAccessible.UI
                     }
                     else
                     {
-                        int mins = (int)Math.Ceiling(remaining / 60.0);
-                        text += "  " + string.Format(Localization.Get("shop.daily.wait"), mins);
+                        TimeSpan t = TimeSpan.FromSeconds(remaining);
+                        string waitText = string.Format(Localization.Get("shop.daily.wait"), (int)t.TotalHours, t.Minutes);
+                        text += "  " + waitText;
                     }
                 }
                 Brush b = i == _shopIndex ? Brushes.Gold : Brushes.White;
@@ -664,11 +674,63 @@ namespace CandyCrushAccessible.UI
             }
         }
 
+        private void AnnounceLivesRealtime()
+        {
+            _progress.UpdateLives();
+            if (_progress.Lives >= 5)
+            {
+                Speech.SpeakInterrupt(string.Format(Localization.Get("lives.max"), _progress.Lives));
+            }
+            else
+            {
+                TimeSpan t = TimeSpan.FromSeconds(_progress.NextLifeInSeconds());
+                Speech.SpeakInterrupt(string.Format(Localization.Get("lives.next"), _progress.Lives, t.Minutes, t.Seconds));
+            }
+        }
+
         private void HandlePlayingKeys(KeyEventArgs e)
         {
             if (_board == null || _board.Completed || _board.Failed) return;
+
+            if (_boosterPanelActive)
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Up:
+                    case Keys.W:
+                        _boosterPanelIndex = (_boosterPanelIndex + _ownedBoosters.Count - 1) % _ownedBoosters.Count;
+                        AnnounceBoosterPanelItem();
+                        Invalidate();
+                        return;
+                    case Keys.Down:
+                    case Keys.S:
+                        _boosterPanelIndex = (_boosterPanelIndex + 1) % _ownedBoosters.Count;
+                        AnnounceBoosterPanelItem();
+                        Invalidate();
+                        return;
+                    case Keys.Tab:
+                    case Keys.Escape:
+                        _boosterPanelActive = false;
+                        SoundEngine.PlaySound("button_release");
+                        Speech.SpeakInterrupt(Localization.Get("booster.panel.closed"));
+                        Invalidate();
+                        return;
+                    case Keys.Enter:
+                    case Keys.Space:
+                        ExecuteTacticalBooster();
+                        return;
+                }
+                return;
+            }
+
             switch (e.KeyCode)
             {
+                case Keys.Tab:
+                    OpenTacticalBoosterPanel();
+                    break;
+                case Keys.V:
+                    AnnounceLivesRealtime();
+                    break;
                 case Keys.Left:
                     MoveCursor(-1, 0);
                     break;
@@ -732,6 +794,127 @@ namespace CandyCrushAccessible.UI
                     _pauseIndex = 0;
                     SwitchScreen(GameScreen.Pause);
                     AnnounceMenu(PauseItems[0]);
+                    break;
+            }
+        }
+
+        private void OpenTacticalBoosterPanel()
+        {
+            _ownedBoosters.Clear();
+            foreach (BoosterType t in Boosters.All)
+            {
+                if (_progress.GetBooster(t) > 0)
+                {
+                    _ownedBoosters.Add(t);
+                }
+            }
+            if (_ownedBoosters.Count > 0)
+            {
+                _boosterPanelActive = true;
+                _boosterPanelIndex = 0;
+                SoundEngine.PlaySound("swoop_in");
+                Speech.SpeakInterrupt(string.Format(Localization.Get("booster.panel.open"), Board.CellName(_cursorX, _cursorY)) + ". " + GetBoosterPanelItemText(_boosterPanelIndex));
+                Invalidate();
+            }
+            else
+            {
+                SoundEngine.PlaySound("invalid");
+                Speech.Speak(Localization.Get("booster.panel.empty"));
+            }
+        }
+
+        private string GetBoosterPanelItemText(int index)
+        {
+            if (index < 0 || index >= _ownedBoosters.Count) return "";
+            BoosterType t = _ownedBoosters[index];
+            int count = _progress.GetBooster(t);
+            return Boosters.Name(t) + " (" + string.Format(Localization.Get("booster.count"), count) + "). " + Boosters.Description(t);
+        }
+
+        private void AnnounceBoosterPanelItem()
+        {
+            SoundEngine.PlaySound("button");
+            Speech.SpeakInterrupt(GetBoosterPanelItemText(_boosterPanelIndex));
+        }
+
+        private void ExecuteTacticalBooster()
+        {
+            if (_boosterPanelIndex < 0 || _boosterPanelIndex >= _ownedBoosters.Count) return;
+            BoosterType t = _ownedBoosters[_boosterPanelIndex];
+            if (_progress.GetBooster(t) <= 0)
+            {
+                SoundEngine.PlaySound("invalid");
+                Speech.Speak(Localization.Get("booster.panel.empty"));
+                _boosterPanelActive = false;
+                Invalidate();
+                return;
+            }
+
+            switch (t)
+            {
+                case BoosterType.LollipopHammer:
+                    _boosterPanelActive = false;
+                    UseHammer();
+                    break;
+                case BoosterType.ColorBomb:
+                    if (_board.PlaceSpecialAt(_cursorX, _cursorY, SpecialType.ColorBomb))
+                    {
+                        _progress.UseBooster(t);
+                        _progress.Save();
+                        _boosterPanelActive = false;
+                        SoundEngine.PlaySound("colorbomb_created");
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("booster.colorbomb.placed"), Board.CellName(_cursorX, _cursorY)) + ". " + _board.DescribeCell(_cursorX, _cursorY));
+                        CheckGameOver();
+                        Invalidate();
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound("invalid");
+                        Speech.Speak(Localization.Get("msg.invalid"));
+                    }
+                    break;
+                case BoosterType.JellyFish:
+                    if (_board.PlaceSpecialAt(_cursorX, _cursorY, SpecialType.Fish))
+                    {
+                        _progress.UseBooster(t);
+                        _progress.Save();
+                        _boosterPanelActive = false;
+                        SoundEngine.PlaySound("fish");
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("booster.jellyfish.placed"), Board.CellName(_cursorX, _cursorY)) + ". " + _board.DescribeCell(_cursorX, _cursorY));
+                        CheckGameOver();
+                        Invalidate();
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound("invalid");
+                        Speech.Speak(Localization.Get("msg.invalid"));
+                    }
+                    break;
+                case BoosterType.ExtraMoves:
+                    _progress.UseBooster(t);
+                    _progress.Save();
+                    _boosterPanelActive = false;
+                    _board.AddMoves(5);
+                    SoundEngine.PlaySound("klubb");
+                    Speech.SpeakInterrupt(Localization.Get("booster.plus.moves") + ". " + string.Format(Localization.Get("moves.count"), _board.MovesLeft));
+                    Invalidate();
+                    break;
+                case BoosterType.ExtraTime:
+                    if (_board.Level.Type == LevelType.Timed)
+                    {
+                        _progress.UseBooster(t);
+                        _progress.Save();
+                        _boosterPanelActive = false;
+                        _board.AddTime(15);
+                        SoundEngine.PlaySound("time_warning");
+                        Speech.SpeakInterrupt(Localization.Get("booster.plus.time") + ". " + string.Format(Localization.Get("time.count"), (int)Math.Ceiling(_board.TimeLeft)) + "s");
+                        Invalidate();
+                    }
+                    else
+                    {
+                        SoundEngine.PlaySound("invalid");
+                        Speech.Speak(Localization.Get("msg.invalid"));
+                    }
                     break;
             }
         }
@@ -1772,6 +1955,31 @@ del ""%~f0""
             for (int y = 0; y < Board.Rows; y++)
             {
                 g.DrawString((y + 1).ToString(), Font, Brushes.Gray, BoardX - 20, BoardY + y * CellSize + CellSize / 2 - 8);
+            }
+
+            if (_boosterPanelActive && _ownedBoosters.Count > 0)
+            {
+                Rectangle panelRect = new Rectangle(BoardX + 15, BoardY + 30, Board.Cols * CellSize - 30, Math.Min(340, 60 + _ownedBoosters.Count * 48));
+                using (SolidBrush bg = new SolidBrush(Color.FromArgb(245, 25, 20, 45)))
+                {
+                    g.FillRectangle(bg, panelRect);
+                }
+                g.DrawRectangle(Pens.Gold, panelRect);
+                g.DrawString(string.Format(Localization.Get("booster.panel.open"), Board.CellName(_cursorX, _cursorY)), new Font(Font.FontFamily, 11, FontStyle.Bold), Brushes.Gold, panelRect.X + 15, panelRect.Y + 12);
+                int py = panelRect.Y + 38;
+                for (int i = 0; i < _ownedBoosters.Count; i++)
+                {
+                    BoosterType bt = _ownedBoosters[i];
+                    string itemText = (i == _boosterPanelIndex ? "> " : "  ") + Boosters.Name(bt) + " (" + _progress.GetBooster(bt) + ")";
+                    Brush b = i == _boosterPanelIndex ? Brushes.Gold : Brushes.White;
+                    Font f = i == _boosterPanelIndex ? new Font(Font.FontFamily, 11, FontStyle.Bold) : new Font(Font.FontFamily, 11);
+                    g.DrawString(itemText, f, b, panelRect.X + 15, py);
+                    if (i == _boosterPanelIndex)
+                    {
+                        g.DrawString(Boosters.Description(bt), new Font(Font.FontFamily, 9), Brushes.LightGray, panelRect.X + 35, py + 18);
+                    }
+                    py += 44;
+                }
             }
         }
 

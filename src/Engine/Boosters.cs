@@ -34,5 +34,18 @@ namespace CandyCrushAccessible.Engine
             }
             return "";
         }
+
+        public static string Description(BoosterType type)
+        {
+            switch (type)
+            {
+                case BoosterType.LollipopHammer: return Localization.Get("desc.hammer");
+                case BoosterType.ExtraMoves: return Localization.Get("desc.extramoves");
+                case BoosterType.ExtraTime: return Localization.Get("desc.extratime");
+                case BoosterType.ColorBomb: return Localization.Get("desc.colorbomb");
+                case BoosterType.JellyFish: return Localization.Get("desc.jellyfish");
+            }
+            return "";
+        }
     }
 }

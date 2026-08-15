@@ -1726,6 +1726,15 @@ namespace CandyCrushAccessible.Engine
             return true;
         }
 
+        public bool PlaceSpecialAt(int x, int y, SpecialType type)
+        {
+            if (x < 0 || x >= Cols || y < 0 || y >= Rows) return false;
+            Candy c = _grid[x, y];
+            if (c == null || c.IsIngredient || _chocolate[x, y] || HasFrosting(x, y) || c.IsLicorice) return false;
+            c.Special = type;
+            return true;
+        }
+
         public TurnResult SmashCell(int x, int y)
         {
             TurnResult result = new TurnResult();
