@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.0.2 Lanzamiento Oficial (15 de Agosto de 2026)  
+**Versión:** v1.0.3 Lanzamiento Oficial (15 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.0.2-08.15.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.0.3-08.15.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -125,9 +125,9 @@ src/
 
 - **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.2-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.2-08.15.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.3-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.3-08.15.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.0.2: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.2-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.2-08.15.2026)
+- Release v1.0.3: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.3-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0.3-08.15.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
