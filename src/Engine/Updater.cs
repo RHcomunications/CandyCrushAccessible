@@ -18,11 +18,28 @@ namespace CandyCrushAccessible.Engine
         public static string CurrentVersion => GetLocalVersionString();
         public static UpdateInfo AvailableUpdate = null;
 
+        public static Version GetLocalVersion()
+        {
+            var asm = typeof(Updater).Assembly;
+            var infoVerAttr = (System.Reflection.AssemblyInformationalVersionAttribute)Attribute.GetCustomAttribute(asm, typeof(System.Reflection.AssemblyInformationalVersionAttribute));
+            if (infoVerAttr != null && !string.IsNullOrEmpty(infoVerAttr.InformationalVersion))
+            {
+                string raw = infoVerAttr.InformationalVersion.Split('+')[0].Trim();
+                if (raw.StartsWith("v", StringComparison.OrdinalIgnoreCase)) raw = raw.Substring(1);
+                if (raw.Contains("-")) raw = raw.Split('-')[0];
+                if (Version.TryParse(raw, out Version vInfo))
+                {
+                    return vInfo;
+                }
+            }
+            var v = asm.GetName().Version;
+            return new Version(v.Major, v.Minor, v.Build >= 0 ? v.Build : 0);
+        }
+
         public static string GetLocalVersionString()
         {
-            var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            int build = v.Build >= 0 ? v.Build : 0;
-            return $"{v.Major}.{v.Minor}.{build}";
+            var v = GetLocalVersion();
+            return $"{v.Major}.{v.Minor}.{v.Build}";
         }
 
         public static async Task<bool> CheckConnectionAsync()
@@ -72,8 +89,7 @@ namespace CandyCrushAccessible.Engine
                             return null;
                         }
 
-                        var asmVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                        Version strictLocal = new Version(asmVer.Major, asmVer.Minor, asmVer.Build > 0 ? asmVer.Build : 0);
+                        Version strictLocal = GetLocalVersion();
 
                         string downloadUrl = "";
                         if (root.TryGetProperty("assets", out var assetsElem) && assetsElem.ValueKind == JsonValueKind.Array)

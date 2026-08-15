@@ -1599,20 +1599,28 @@ namespace CandyCrushAccessible.UI
 
         private void ApplyUpdateAndRestart(string zipPath)
         {
+            try { SoundEngine.Shutdown(); } catch { }
             string appDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
             string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+            string exeName = System.IO.Path.GetFileName(exePath);
             string batPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "apply_update.cmd");
             string logPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "update_log.txt");
 
             string script = $@"@echo off
 title Actualizador de Candy Crush Accesible
 echo Esperando a que el motor principal se cierre por completo...
-timeout /t 3 /nobreak > nul
+
+:wait_loop
+tasklist /fi ""imagename eq {exeName}"" 2>NUL | find /i ""{exeName}"" >NUL
+if ""%ERRORLEVEL%""==""0"" (
+    timeout /t 1 /nobreak > nul
+    goto wait_loop
+)
+timeout /t 2 /nobreak > nul
 
 echo.
 echo Extrayendo nueva version...
-REM Usamos PowerShell para extraer, forzando la sobrescritura y capturando errores.
-powershell -Command ""Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force"" > ""{logPath}"" 2>&1
+powershell -ExecutionPolicy Bypass -Command ""$ProgressPreference = 'SilentlyContinue'; Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force"" > ""{logPath}"" 2>&1
 
 IF %ERRORLEVEL% NEQ 0 (
     echo.
