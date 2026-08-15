@@ -15,7 +15,7 @@ namespace CandyCrushAccessible.Engine
 
     public static class Updater
     {
-        public static string CurrentVersion = "1.0.0";
+        public static string CurrentVersion = "1.0.2";
         public static UpdateInfo AvailableUpdate = null;
 
         public static bool CheckConnection()

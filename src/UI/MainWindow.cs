@@ -55,7 +55,7 @@ namespace CandyCrushAccessible.UI
 
         private readonly string[] OptionsItems =
         {
-            "options.language", "options.music", "options.sfx", "options.voice", "options.binaural"
+            "options.language", "options.music", "options.sfx", "options.voice", "options.binaural", "options.update"
         };
 
         private readonly string[] PauseItems =
@@ -1226,12 +1226,32 @@ namespace CandyCrushAccessible.UI
                     {
                         ToggleBinauralAmbient();
                     }
+                    else if (_optionsIndex == 5)
+                    {
+                        CheckForUpdatesManual();
+                    }
                     break;
                 case Keys.Escape:
                 case Keys.Back:
                     _progress.Save();
                     SwitchScreen(GameScreen.MainMenu);
                     break;
+            }
+        }
+
+        private async void CheckForUpdatesManual()
+        {
+            SoundEngine.PlaySound("button");
+            Speech.Speak(Localization.Get("update.checking"));
+            var update = await Updater.CheckForUpdatesAsync();
+            if (update != null)
+            {
+                SwitchScreen(GameScreen.UpdateAvailable);
+                Speech.SpeakInterrupt(string.Format(Localization.Get("update.available"), update.Version, update.ReleaseNotes));
+            }
+            else
+            {
+                Speech.Speak(Localization.Get("update.none"));
             }
         }
 
@@ -1311,6 +1331,9 @@ namespace CandyCrushAccessible.UI
                 case 4:
                     string state = _progress.BinauralAmbientEnabled ? Localization.Get("yes") : Localization.Get("no");
                     Speech.SpeakInterrupt(string.Format(Localization.Get("options.binaural.value"), state));
+                    break;
+                case 5:
+                    Speech.SpeakInterrupt(Localization.Get("options.update"));
                     break;
             }
         }
@@ -1812,7 +1835,8 @@ del ""%~f0""
                 string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[1]), (int)(SoundEngine.MusicVolume * 100)),
                 string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[2]), (int)(SoundEngine.SfxVolume * 100)),
                 string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[3]), (int)(SoundEngine.VoiceVolume * 100)),
-                string.Format(Localization.Get("options.binaural.value"), binState)
+                string.Format(Localization.Get("options.binaural.value"), binState),
+                Localization.Get("options.update")
             };
             int y = 90;
             for (int i = 0; i < OptionsItems.Length; i++)
