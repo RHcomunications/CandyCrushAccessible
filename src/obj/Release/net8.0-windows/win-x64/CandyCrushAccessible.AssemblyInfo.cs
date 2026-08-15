@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyDescriptionAttribute("Clon 100% accesible de Candy Crush Saga (Edición 2012) con audio binaural.")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.2026.0815")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.2+ec9412c858fcac056cee55c5b6de9d2e18eb801e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.2+1cc0fe36918bfbdc15423e072c8f98402a165f2b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Candy Crush Accesible")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CandyCrushAccessible")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.2026.0815")]

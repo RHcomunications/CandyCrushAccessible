@@ -1606,20 +1606,48 @@ namespace CandyCrushAccessible.UI
 
         private void ApplyUpdateAndRestart(string zipPath)
         {
-            string appDir = AppDomain.CurrentDomain.BaseDirectory;
-            string batPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "apply_update.bat");
+            string appDir = AppDomain.CurrentDomain.BaseDirectory.TrimEnd('\\', '/');
+            string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+            string batPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "apply_update.cmd");
+            string logPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "update_log.txt");
+
             string script = $@"@echo off
-timeout /t 2 /nobreak > NUL
-powershell -Command ""Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force""
-start """" ""{System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName}""
-del ""{zipPath}""
+title Actualizador de Candy Crush Accesible
+echo Esperando a que el motor principal se cierre por completo...
+timeout /t 3 /nobreak > nul
+
+echo.
+echo Extrayendo nueva version...
+REM Usamos PowerShell para extraer, forzando la sobrescritura y capturando errores.
+powershell -Command ""Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force"" > ""{logPath}"" 2>&1
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo [ERROR CRITICO] Ocurrio un problema al extraer los archivos.
+    echo Revisa el archivo update_log.txt para mas detalles.
+    echo.
+    type ""{logPath}""
+    echo.
+    echo Presiona cualquier tecla para cerrar esta ventana...
+    pause > nul
+    exit /b %ERRORLEVEL%
+)
+
+echo.
+echo Limpiando archivos temporales...
+if exist ""{zipPath}"" del ""{zipPath}""
+if exist ""{logPath}"" del ""{logPath}""
+
+echo.
+echo Reiniciando el juego...
+start """" ""{exePath}""
 del ""%~f0""
 ";
             System.IO.File.WriteAllText(batPath, script);
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
                 FileName = batPath,
-                CreateNoWindow = true,
+                WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
                 UseShellExecute = true
             });
             Application.Exit();
