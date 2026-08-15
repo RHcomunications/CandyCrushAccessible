@@ -204,6 +204,14 @@ namespace CandyCrushAccessible.Engine
             {"options.language.value", "Idioma: {0}"},
             {"options.binaural.value", "Ambiente binaural: {0}"},
 
+            {"update.available", "Actualización disponible: {0}. Novedades: {1}. Pulsa Intro para descargar o Escape para ignorar por ahora."},
+            {"update.downloading", "Descargando actualización. Pulsa 1 para megabytes descargados, 2 para tamaño total, 3 para velocidad o Espacio para porcentaje."},
+            {"update.complete", "Descarga completada. El juego se reiniciará para aplicar la actualización."},
+            {"update.mb_downloaded", "{0} megabytes descargados"},
+            {"update.mb_total", "Tamaño total {0} megabytes"},
+            {"update.speed", "{0} megabytes por segundo"},
+            {"update.percent", "{0} por ciento"},
+
             {"pause.title", "Pausa"},
             {"pause.resume", "Reanudar"},
             {"pause.restart", "Reiniciar nivel"},
@@ -474,6 +482,14 @@ namespace CandyCrushAccessible.Engine
             {"options.value", "Option {0}: {1}"},
             {"options.language.value", "Language: {0}"},
             {"options.binaural.value", "Binaural ambient: {0}"},
+
+            {"update.available", "Update available: {0}. Release notes: {1}. Press Enter to download or Escape to ignore for now."},
+            {"update.downloading", "Downloading update. Press 1 for downloaded megabytes, 2 for total size, 3 for speed, or Space for percentage."},
+            {"update.complete", "Download complete. The game will restart to apply the update."},
+            {"update.mb_downloaded", "{0} megabytes downloaded"},
+            {"update.mb_total", "Total size {0} megabytes"},
+            {"update.speed", "{0} megabytes per second"},
+            {"update.percent", "{0} percent"},
 
             {"pause.title", "Pause"},
             {"pause.resume", "Resume"},

@@ -28,6 +28,9 @@ namespace CandyCrushAccessible.Engine
         public Dictionary<BoosterType, int> BoosterCounts { get; set; } = new Dictionary<BoosterType, int>();
         public bool LanguageSpanish { get; set; } = true;
         public bool BinauralAmbientEnabled { get; set; } = true;
+        public float MusicVolume { get; set; } = 0.45f;
+        public float SfxVolume { get; set; } = 0.8f;
+        public float VoiceVolume { get; set; } = 0.9f;
 
         private static string SavePath
         {

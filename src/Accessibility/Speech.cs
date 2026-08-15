@@ -84,7 +84,6 @@ namespace CandyCrushAccessible.Accessibility
                     }
                     nvdaController_speakText(text);
                     _lastNvdaSpeak = now;
-                    SoundEngine.DuckMusic(0.3f, 1200);
                 }
                 else if (_sapiReady)
                 {
@@ -104,7 +103,6 @@ namespace CandyCrushAccessible.Accessibility
                     Thread.Sleep(15);
                     nvdaController_speakText(text);
                     _lastNvdaSpeak = DateTime.UtcNow;
-                    SoundEngine.DuckMusic(0.3f, 1200);
                 }
                 else if (_sapiReady)
                 {

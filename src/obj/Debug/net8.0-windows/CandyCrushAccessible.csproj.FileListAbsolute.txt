@@ -15,3 +15,4 @@ C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\ref\CandyCrush
 C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\bass.dll
 C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\nvdaControllerClient32.dll
 C:\Users\artik\Downloads\candy crush\bin\Debug\net8.0-windows\nvdaControllerClient64.dll
+C:\Users\artik\Downloads\candy crush\src\obj\Debug\net8.0-windows\CandyCrushAccessible.sourcelink.json

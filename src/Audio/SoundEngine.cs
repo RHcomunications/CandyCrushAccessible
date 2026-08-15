@@ -222,7 +222,6 @@ namespace CandyCrushAccessible.Audio
             if (h == 0) return;
             BASS_ChannelSetAttribute(h, BASS_ATTRIB_VOL, _voiceVolume);
             BASS_ChannelPlay(h, false);
-            DuckMusic(0.25f, 1000);
 
             lock (ActiveStreams)
             {

@@ -1,8 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "pZU+vfqXkw4=",
+  "dgSpecHash": "p4QRISJ+sLA=",
   "success": true,
   "projectFilePath": "C:\\Users\\artik\\Downloads\\candy crush\\src\\CandyCrushAccessible.csproj",
-  "expectedPackageFiles": [],
+  "expectedPackageFiles": [
+    "C:\\Users\\artik\\.nuget\\packages\\microsoft.netcore.app.runtime.win-x64\\8.0.30\\microsoft.netcore.app.runtime.win-x64.8.0.30.nupkg.sha512",
+    "C:\\Users\\artik\\.nuget\\packages\\microsoft.windowsdesktop.app.runtime.win-x64\\8.0.30\\microsoft.windowsdesktop.app.runtime.win-x64.8.0.30.nupkg.sha512",
+    "C:\\Users\\artik\\.nuget\\packages\\microsoft.aspnetcore.app.runtime.win-x64\\8.0.30\\microsoft.aspnetcore.app.runtime.win-x64.8.0.30.nupkg.sha512"
+  ],
   "logs": []
 }

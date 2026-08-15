@@ -20,7 +20,8 @@ namespace CandyCrushAccessible.UI
         Tutorial,
         Pause,
         Complete,
-        Failed
+        Failed,
+        UpdateAvailable
     }
 
     public class MainWindow : Form
@@ -103,10 +104,28 @@ namespace CandyCrushAccessible.UI
             ContentResolver.Initialize();
             SoundEngine.Init();
             SoundEngine.BinauralAmbientEnabled = _progress.BinauralAmbientEnabled;
+            SoundEngine.MusicVolume = _progress.MusicVolume;
+            SoundEngine.SfxVolume = _progress.SfxVolume;
+            SoundEngine.VoiceVolume = _progress.VoiceVolume;
             Speech.Initialize();
             Localization.Current = _progress.LanguageSpanish ? Language.Spanish : Language.English;
-            SwitchScreen(GameScreen.MainMenu);
-            SoundEngine.PlayMusic(MusicTrack.Menu);
+
+            CheckUpdateAvailableOnStartup();
+        }
+
+        private async void CheckUpdateAvailableOnStartup()
+        {
+            var update = await Updater.CheckForUpdatesAsync();
+            if (update != null)
+            {
+                SwitchScreen(GameScreen.UpdateAvailable);
+                Speech.SpeakInterrupt(string.Format(Localization.Get("update.available"), update.Version, update.ReleaseNotes));
+            }
+            else
+            {
+                SwitchScreen(GameScreen.MainMenu);
+                SoundEngine.PlayMusic(MusicTrack.Menu);
+            }
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
@@ -133,6 +152,7 @@ namespace CandyCrushAccessible.UI
                 case GameScreen.Pause: DrawPause(g); break;
                 case GameScreen.Complete: DrawComplete(g); break;
                 case GameScreen.Failed: DrawFailed(g); break;
+                case GameScreen.UpdateAvailable: DrawUpdateAvailable(g); break;
                 default: DrawLoading(g); break;
             }
         }
@@ -200,6 +220,7 @@ namespace CandyCrushAccessible.UI
                 case GameScreen.Pause: HandlePauseKeys(e); break;
                 case GameScreen.Complete: HandleCompleteKeys(e); break;
                 case GameScreen.Failed: HandleFailedKeys(e); break;
+                case GameScreen.UpdateAvailable: HandleUpdateKeys(e); break;
                 default: handled = false; break;
             }
             if (handled) e.Handled = true;
@@ -1242,21 +1263,27 @@ namespace CandyCrushAccessible.UI
             {
                 case 1:
                     float m = SoundEngine.MusicVolume;
-                    m = Math.Max(0, Math.Min(1f, m + delta * 0.1f));
+                    m = Math.Max(0, Math.Min(1f, (float)Math.Round(m + delta * 0.05f, 2)));
                     SoundEngine.MusicVolume = m;
-                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[1]), (int)(m * 100)));
+                    _progress.MusicVolume = m;
+                    _progress.Save();
+                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[1]), (int)Math.Round(m * 100)));
                     break;
                 case 2:
                     float s = SoundEngine.SfxVolume;
-                    s = Math.Max(0, Math.Min(1f, s + delta * 0.1f));
+                    s = Math.Max(0, Math.Min(1f, (float)Math.Round(s + delta * 0.05f, 2)));
                     SoundEngine.SfxVolume = s;
-                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[2]), (int)(s * 100)));
+                    _progress.SfxVolume = s;
+                    _progress.Save();
+                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[2]), (int)Math.Round(s * 100)));
                     break;
                 case 3:
                     float v = SoundEngine.VoiceVolume;
-                    v = Math.Max(0, Math.Min(1f, v + delta * 0.1f));
+                    v = Math.Max(0, Math.Min(1f, (float)Math.Round(v + delta * 0.05f, 2)));
                     SoundEngine.VoiceVolume = v;
-                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[3]), (int)(v * 100)));
+                    _progress.VoiceVolume = v;
+                    _progress.Save();
+                    Speech.Speak(string.Format(Localization.Get("options.value"), Localization.Get(OptionsItems[3]), (int)Math.Round(v * 100)));
                     break;
                 case 4:
                     ToggleBinauralAmbient();
@@ -1450,12 +1477,147 @@ namespace CandyCrushAccessible.UI
             }
         }
 
+        private bool _isDownloadingUpdate = false;
+        private long _bytesDownloaded = 0;
+        private long _totalBytesToDownload = 0;
+        private double _downloadSpeedMbps = 0;
+        private DateTime _lastDownloadMeasureTime = DateTime.MinValue;
+        private long _lastDownloadBytesMeasure = 0;
+
+        private void HandleUpdateKeys(KeyEventArgs e)
+        {
+            if (!_isDownloadingUpdate)
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    SoundEngine.PlaySound("button");
+                    StartUpdateDownload();
+                }
+                else if (e.KeyCode == Keys.Escape)
+                {
+                    SwitchScreen(GameScreen.MainMenu);
+                    SoundEngine.PlayMusic(MusicTrack.Menu);
+                }
+            }
+            else
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.D1:
+                    case Keys.NumPad1:
+                        double mbDownloaded = _bytesDownloaded / (1024.0 * 1024.0);
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("update.mb_downloaded"), Math.Round(mbDownloaded, 1)));
+                        break;
+                    case Keys.D2:
+                    case Keys.NumPad2:
+                        double mbTotal = _totalBytesToDownload / (1024.0 * 1024.0);
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("update.mb_total"), Math.Round(mbTotal, 1)));
+                        break;
+                    case Keys.D3:
+                    case Keys.NumPad3:
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("update.speed"), Math.Round(_downloadSpeedMbps, 2)));
+                        break;
+                    case Keys.Space:
+                        int pct = _totalBytesToDownload > 0 ? (int)(_bytesDownloaded * 100 / _totalBytesToDownload) : 0;
+                        Speech.SpeakInterrupt(string.Format(Localization.Get("update.percent"), pct));
+                        break;
+                }
+            }
+        }
+
+        private async void StartUpdateDownload()
+        {
+            if (Updater.AvailableUpdate == null) return;
+            _isDownloadingUpdate = true;
+            Speech.SpeakInterrupt(Localization.Get("update.downloading"));
+            string zipPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "CandyCrushAccessible_update.zip");
+
+            try
+            {
+                using (var client = new System.Net.Http.HttpClient())
+                {
+                    client.DefaultRequestHeaders.Add("User-Agent", "CandyCrushAccessible-Updater");
+                    using (var response = await client.GetAsync(Updater.AvailableUpdate.DownloadUrl, System.Net.Http.HttpCompletionOption.ResponseHeadersRead))
+                    {
+                        response.EnsureSuccessStatusCode();
+                        _totalBytesToDownload = response.Content.Headers.ContentLength ?? 0;
+                        _bytesDownloaded = 0;
+                        _lastDownloadMeasureTime = DateTime.UtcNow;
+                        _lastDownloadBytesMeasure = 0;
+
+                        using (var stream = await response.Content.ReadAsStreamAsync())
+                        using (var fileStream = new System.IO.FileStream(zipPath, System.IO.FileMode.Create, System.IO.FileAccess.Write, System.IO.FileShare.None, 8192, true))
+                        {
+                            byte[] buffer = new byte[8192];
+                            int read;
+                            while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+                            {
+                                await fileStream.WriteAsync(buffer, 0, read);
+                                _bytesDownloaded += read;
+
+                                var now = DateTime.UtcNow;
+                                double elapsed = (now - _lastDownloadMeasureTime).TotalSeconds;
+                                if (elapsed >= 0.5)
+                                {
+                                    long diff = _bytesDownloaded - _lastDownloadBytesMeasure;
+                                    _downloadSpeedMbps = (diff / (1024.0 * 1024.0)) / elapsed;
+                                    _lastDownloadMeasureTime = now;
+                                    _lastDownloadBytesMeasure = _bytesDownloaded;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Speech.SpeakInterrupt(Localization.Get("update.complete"));
+                ApplyUpdateAndRestart(zipPath);
+            }
+            catch (Exception ex)
+            {
+                _isDownloadingUpdate = false;
+                Speech.SpeakInterrupt("Error: " + ex.Message);
+                SwitchScreen(GameScreen.MainMenu);
+                SoundEngine.PlayMusic(MusicTrack.Menu);
+            }
+        }
+
+        private void ApplyUpdateAndRestart(string zipPath)
+        {
+            string appDir = AppDomain.CurrentDomain.BaseDirectory;
+            string batPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "apply_update.bat");
+            string script = $@"@echo off
+timeout /t 2 /nobreak > NUL
+powershell -Command ""Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force""
+start """" ""{System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName}""
+del ""{zipPath}""
+del ""%~f0""
+";
+            System.IO.File.WriteAllText(batPath, script);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = batPath,
+                CreateNoWindow = true,
+                UseShellExecute = true
+            });
+            Application.Exit();
+        }
+
         private void DrawLoading(Graphics g)
         {
             string text = Localization.Get("game.title");
             SizeF s = g.MeasureString(text, Font);
             g.DrawString(text, new Font(Font.FontFamily, 24), Brushes.White,
                 (ClientSize.Width - s.Width) / 2, ClientSize.Height / 2 - 20);
+        }
+
+        private void DrawUpdateAvailable(Graphics g)
+        {
+            g.DrawString(Localization.Get("game.title"), new Font(Font.FontFamily, 22), Brushes.Gold, 40, 30);
+            if (Updater.AvailableUpdate != null)
+            {
+                string info = string.Format(Localization.Get("update.available"), Updater.AvailableUpdate.Version, Updater.AvailableUpdate.ReleaseNotes);
+                g.DrawString(info, new Font(Font.FontFamily, 12), Brushes.White, new RectangleF(40, 80, ClientSize.Width - 80, ClientSize.Height - 160));
+            }
         }
 
         private void DrawMainMenu(Graphics g)
