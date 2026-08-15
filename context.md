@@ -103,19 +103,19 @@ src/
    - En la página 3 del tutorial, las teclas `1` (`striped`), `2` (`wrapped`) y `3` (`colorbomb`) ejecutan demostraciones auditivas aisladas binaurales sin alterar el progreso del usuario.
 
 7. **Expansión "Dosis Original 2012" a 65 Niveles**:
-   - Expansión de `Levels.cs` con 65 niveles guionados artesanales cubriendo los 7 episodios originales (Prados Deliciosos, Cafetería de Postres, Bosque de Gomitas, Laguna de Limonada, Montaña de Mentebruma, Cañón de Caramelo, Valle del Malvavisco).
+   - Expansión de `Levels.cs` con 65 niveles guionizados artesanales cubriendo los 7 episodios originales (Prados Deliciosos, Cafetería de Postres, Bosque de Gomitas, Laguna de Limonada, Montaña de Mentebruma, Cañón de Caramelo, Valle del Malvavisco).
    - Modo procedural infinito activo desde el Nivel 66 en adelante.
 
 8. **Manifiesto y Despliegue de Gala (`README.md` & GitHub Release)**:
    - `CandyCrushAccessible.csproj` firmado con metadatos oficiales de **Narayan Projects**.
    - `README.md` bilingüe creado en la raíz del proyecto.
-   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0-08.14.2026 publicado formalmente con binarios ejecutable y DLLs nativas.
+   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0-08.14.2026 publicada formalmente con el paquete de descarga unificado `CandyCrushAccessible-v1.0.zip`.
 
 ---
 
 ## Estado de Certificación Final
 
-- **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionados y generados).
+- **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
 - **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026)
 ## Contacto / Referencias
