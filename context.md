@@ -2,21 +2,23 @@
 
 ## Resumen Ejecutivo
 
-**Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)
-**Idiomas:** Español / Inglés
-**Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural, navegación por teclado)
-**Estado:** Funcional, tests pasando, build Release OK
+**Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
+**Estudio / Publisher:** Narayan Projects / RHcomunications  
+**Versión:** v1.0 Lanzamiento Oficial (14 de Agosto de 2026)  
+**Idiomas:** Español / Inglés (Localización completa)  
+**Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado)  
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.0-08.14.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
 ## Objetivo Principal
 
 Recrear **fielmente** la experiencia de Candy Crush Saga original (2012) para jugadores ciegos/low-vision, manteniendo:
-- Mecánicas idénticas (tablero 8x8, caramelos, especiales, obstáculos, tipos de nivel)
-- Progresión original (30 niveles guionizados + infinitos procedurales por episodios)
-- **Audio binaural signature Narayan Projects** (dulce, acaramelado, estilo Bejeweled 3)
-- Sistema de vidas, boosters, tienda con moneda (lingotes/Gold Bars)
-- Guardado persistente en `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
+- Mecánicas idénticas (tablero 8x8, caramelos, especiales, obstáculos, tipos de nivel).
+- Progresión original de lanzamiento (65 niveles guionizados a mano en 7 episodios + infinitos procedurales a partir del Nivel 66).
+- **Audio binaural signature Narayan Projects** (dulce, acaramelado, estilo Bejeweled 3).
+- Sistema de vidas, boosters, tienda con economía dual (lingotes de oro / monedas virtuales).
+- Guardado persistente en `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`.
 
 ---
 
@@ -25,36 +27,36 @@ Recrear **fielmente** la experiencia de Candy Crush Saga original (2012) para ju
 ### Estructura de Carpetas
 ```
 src/
+├── Accessibility/
+│   └── Speech.cs        # Interop NVDA Controller Client / SAPI Speech Fallback
 ├── Audio/
-│   ├── AudioMap.cs      # Mapeo claves -> archivos .mp3
-│   └── SoundEngine.cs   # Motor BASS.NET, audio binaural 3D
+│   ├── AudioMap.cs      # Mapeo de claves -> archivos .mp3 (incluye efectos de tienda y especiales)
+│   ├── ContentResolver.cs # Resolución de recursos incrustados y en disco
+│   ├── MusicMap.cs      # Mapeo de pistas de música por episodio y pantallas
+│   └── SoundEngine.cs   # Motor BASS.NET, audio binaural 3D, barridos de especiales y shimmer
 ├── Engine/
-│   ├── Board.cs         # Lógica central tablero (1772 líneas)
-│   ├── Levels.cs        # Niveles 1-30 + generador procedural infinito
-│   ├── Orders.cs        # Sistema de pedidos (Order levels)
-│   ├── Boosters.cs      # Tipos y nombres de boosters
-│   ├── Episodes.cs      # Episodios + música por episodio
-│   ├── GameProgress.cs  # Guardado, vidas, lingotes, boosters, unlocks
-│   └── Localization.cs  # ES/EN (550+ claves)
-��── UI/
-    └── MainWindow.cs    # WinForms, teclado, TTS, pantallas (1580+ líneas)
+│   ├── Board.cs         # Lógica central del tablero y física de caramelos
+│   ├── Boosters.cs      # Tipos y nombres de potenciadores
+│   ├── Candy.cs          # Definición de tipos y colores de caramelos
+│   ├── Episodes.cs      # Definición de los 7 episodios originales (Niveles 1-65) y nombres procedurales
+│   ├── GameProgress.cs  # Guardado JSON, vidas, lingotes, monedas, boosters, unlocks, IsDevMode
+│   ├── Levels.cs        # 65 niveles guionizados artesanales + generador procedural infinito (>=66)
+│   ├── Localization.cs  # Cadenas bilingües ES/EN
+│   └── Orders.cs        # Sistema de pedidos (Order levels)
+├── UI/
+│   └── MainWindow.cs    # WinForms, teclado, renderizado, menú de opciones, tienda y tutorial
+└── Program.cs           # Punto de entrada de la aplicación WinForms x64
 ```
 
-### Dependencias Críticas
-- **Bass.Net** (audio 3D, streaming, efectos)
-- **NAudio** (fallback/compatibilidad)
-- **System.Text.Json** (serialización save)
-- **System.Speech / NVDA Controller** (TTS)
-
-### Compilación y Tests
+### Compilación y Publicación
 ```bash
-# Debug
+# Debug Build
 & "$env:LOCALAPPDATA\dotnet\dotnet.exe" build "src\CandyCrushAccessible.csproj" -c Debug
 
-# Release
+# Release Build
 & "$env:LOCALAPPDATA\dotnet\dotnet.exe" build "src\CandyCrushAccessible.csproj" -c Release
 
-# Tests motor (usar SIEMPRE antes de commit)
+# Suite de Tests Automatizados del Motor
 & "$env:LOCALAPPDATA\dotnet\dotnet.exe" run --project "$env:TEMP\opencode\engine_test\EngineTest.csproj" -c Debug
 ```
 
@@ -67,170 +69,57 @@ src/
 |---|---|
 | **Pan por columna** | A=-1.0 (izq) → H=+1.0 (der) |
 | **Profundidad por fila** | Pitch: `1.05 - 0.015*row` (fila 0 agudo → fila 7 grave), Vol: `0.80 + 0.35*row/7` |
-| **Barrido línea horizontal** | `PlayLineBlastSweep` L→R (pan -1→+1 en 300ms) |
-| **Barrido línea vertical** | `PlayLineBlastSweep` arriba→abajo (pitch descendente) |
-| **Explosión wrapped** | `PlayWrappedExplosion` 8 direcciones radiales simultáneas |
-| **Bomba de color** | `PlayColorBombSweep` barrido radial desde centro |
-| **Ambiente** | `PlayBinauralAmbientShimmer` shimmer estéreo suave (opcional) |
-
-### Eventos Espacializados (todos pasan `panCol, row`)
-- Swap, Match, Especiales creados/activados
-- Regaliz, Gelatina, Chocolate, Glaseado, Ingredientes, Bombas
-- Combos en cascada (pitch ascendente por paso)
-- Sugar Crush (ráfaga)
+| **Barrido línea horizontal (`striped`)** | `PlayLineBlastSweep` L→R (pan -1→+1 en 300ms) |
+| **Barrido línea vertical (`striped`)** | `PlayLineBlastSweep` arriba→abajo (pitch descendente) |
+| **Explosión radial (`wrapped`)** | `PlayWrappedExplosion` 8 direcciones radiales simultáneas |
+| **Onda de choque (`colorbomb`)** | `PlayColorBombSweep` barrido radial desde el centro |
+| **Ambiente Binaural** | `PlayBinauralAmbientShimmer` shimmer estéreo suave (toggleable en Opciones) |
 
 ---
 
-## Cambios Implementados en Esta Sesión
+## Novedades e Hitos de la Versión v1.0 (14 de Agosto de 2026)
 
-### 1. Fixes de Bugs Reportados
+1. **Fixes de Sonido y Música en Continuación / Menús**:
+   - Corrección de la música del episodio al comprar +5 movimientos tras pantalla de derrota.
+   - Reanudación automática del tema del menú (`MusicTrack.Menu`) al volver al menú principal o mapa de episodios.
+   - Reparada excepción `FormatException` en la tienda del menú de derrota (`HandleFailedKeys`) pasando lingotes y monedas a `shop.gold`.
 
-| Bug | Archivo | Línea | Solución |
-|---|---|---|---|
-| Volumen opciones: flechas invertidas | `MainWindow.cs` | 916-919 | Izq=-1, Der=+1 en `AdjustOption` |
-| Sonido gelatina incorrecto | `AudioMap.cs` | 41-42 | `"jelly"` → `square-removed2.mp3` |
-| Boosters usan sonido genérico | `MainWindow.cs` | 811, 870 | `"klubb"` (klubb-kross1.mp3) martillo y boosters inicio |
-| Estado nivel (tecla R) no adapta por tipo | `Board.cs` | 1598-1624 | `StatusText()` incluye `extra` según `LevelType` |
-| Formato status no incluía campo extra | `Localization.cs` | 135, 365 | `{5}` en `status.format` |
+2. **Modo Desarrollador (Versión DEBUG)**:
+   - Activación de `GameProgress.IsDevMode = true` en compilaciones DEBUG: otorga 99 vidas (sin consumo), 999 lingotes, 9999 monedas y todos los niveles desbloqueados para pruebas continuas de laboratorio.
+   - Las pruebas automatizadas desactivan `IsDevMode` para certificar el comportamiento estándar de consumo de vidas y partidas reales.
 
-### 2. Persistencia de Partida (Ya funcionaba, validado)
-- Guardado automático en `GameProgress.Save()` tras cada acción relevante
-- Ruta: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
-- Tests usan path temporal vía `GameProgress.SetSavePathForTesting()` para no sobrescribir save real
+3. **Corrección de Gravedad en Obstáculos (Nivel 12 e Ingredientes/Glaseados)**:
+   - Se reescribió `GravityAndRefill` en `Board.cs` con un algoritmo iterativo completo que permite desplazar caramelos y rellenar casillas superiores sobre bloques destruidos o glaseados sin dejar celdas vacías flotantes.
 
-### 3. Sistema de Moneda (Gold Bars) y Tienda — **NUEVO COMPLETO**
+4. **Toggle de Ambiente Binaural en Opciones**:
+   - Propiedad `BinauralAmbientEnabled` persistida en el JSON de progreso.
+   - Opción navegable en la pantalla de Opciones (`MainWindow.cs`) mediante flechas o Enter, con anuncio de voz de estado y early return en `SoundEngine.cs`.
 
-#### GameProgress.cs — Nuevos Campos y Métodos
-```csharp
-public int GoldBars = 0;
-public DateTime DailyBonusDue = DateTime.MinValue;
+5. **Audio Auténtico en la Economía y Tienda (`AudioMap.cs` & `MainWindow.cs`)**:
+   - Asignación de audios dedicados para la tienda: `"shop_buy"` (`button-press.mp3`), `"shop_error"` (`negative-switch-sound1.mp3`) y `"daily_bonus"` (`episode-unlocked-fanfare.mp3`).
 
-public static int GetBoosterUnlockLevel(BoosterType type)
-public bool IsBoosterUnlocked(BoosterType type)
-public static int GetBoosterPrice(BoosterType type)
-public void AddGoldBars(int amount)
-public bool SpendGoldBars(int amount)
-public bool TryCollectDailyBonus()    // 5 gold/24h
-public double DailyBonusTimeRemaining()
-public void AwardLevelCompletion(int stars)  // 1-3 gold por estrellas
-```
+6. **Tutorial Interactivo de Caramelos Especiales (Teclas 1, 2 y 3)**:
+   - Actualización pedagógica de `tutorial.page3` (ES/EN).
+   - En la página 3 del tutorial, las teclas `1` (`striped`), `2` (`wrapped`) y `3` (`colorbomb`) ejecutan demostraciones auditivas aisladas binaurales sin alterar el progreso del usuario.
 
-#### Tabla Unlock/Precios (Fiel al Original 2012)
-| Booster | Nivel Desbloqueo | Precio (Gold) |
-|---|---|---|
-| Lollipop Hammer | 8 | 9 |
-| Extra Moves (+5) | 10 | 9 |
-| Jelly Fish | 12 | 19 |
-| Color Bomb | 19 | 29 |
-| Extra Time (+15s) | 20 | 19 |
+7. **Expansión "Dosis Original 2012" a 65 Niveles**:
+   - Expansión de `Levels.cs` con 65 niveles guionados artesanales cubriendo los 7 episodios originales (Prados Deliciosos, Cafetería de Postres, Bosque de Gomitas, Laguna de Limonada, Montaña de Mentebruma, Cañón de Caramelo, Valle del Malvavisco).
+   - Modo procedural infinito activo desde el Nivel 66 en adelante.
 
-#### Pantalla Shop (`GameScreen.Shop`)
-- Acceso desde Menú Principal (nueva opción "Tienda/Shop")
-- Navegación Up/Down, Enter compra, Escape vuelve
-- Muestra: nombre, precio, estado (bloqueado/precio/poseído), lingotes actuales
-- Bono diario recargable (5 gold cada 24h)
-
-#### Integración en Flujo de Juego
-- **Sin boosters gratis al inicio** (eliminado `GrantStarterBoosters`)
-- **Pantalla Boosters filtra solo desbloqueados** (`GetAvailableBoosters()`)
-- **Fall screen**: opción "Comprar 5 movimientos (9 lingotes)"
-- **Fix en Guardado de Progreso**: Se convirtieron los campos de `GameProgress.cs` a propiedades con getters/setters auto-implementados (`{ get; set; }`). La serialización System.Text.Json ahora guarda y carga correctamente `CurrentLevel`, `BestStars`, `BestScores`, `GoldBars`, `Coins` y `BoosterCounts`, manteniendo el progreso entre ejecuciones sin reiniciar el juego.
-- **Sistema de Monedas Virtuales y Paquetes de Lingotes**:
-  - Introducido el saldo de **Monedas** (`Coins`), obtenidas al ganar niveles (+20 por estrella) y en el bono diario (+50 monedas).
-  - Añadidos paquetes de lingotes en la tienda comprables con monedas virtuales:
-    - *Paquete Chico*: 10 Lingotes por 100 monedas.
-    - *Paquete Mediano*: 30 Lingotes por 250 monedas.
-    - *Paquete Grande*: 70 Lingotes por 500 monedas.
-- **Nombres y Formas Auténticas de Caramelos**:
-  - Se actualizaron las descripciones y lecturas de voz para reflejar la iconografía oficial de Candy Crush Saga (2012):
-    - Red ➔ *frijol rojo* (Red Jelly Bean)
-    - Blue ➔ *paleta azul* (Blue Lollipop Drop)
-    - Green ➔ *gota verde* (Green Square Drop)
-    - Yellow ➔ *gota amarilla* (Yellow Lemon Drop)
-    - Orange ➔ *rombo naranja* (Orange Lozenge)
-    - Purple ➔ *flor morada* (Purple Cluster)
-- **Sugar Crush Épico con Efectos de Caramelos Especiales (Audio Espacializado)**:
-  - Se implementó `ActivationsDetailed` en `Board.cs` para registrar cada caramelo especial detonado durante la ráfaga de Sugar Crush con su tipo y posición exacta `(x, y)`.
-  - Se rediseñó `PlaySugarCrushSequence` en `SoundEngine.cs` para ejecutar la secuencia de audios propia de cada caramelo detonado (barrido de rayados con pitch, explosiones wrapped 3D, ondas de colorbomb y bocados de peces) distribuidos espacialmente en el campo auditivo en vivo.
-- **Refactorización Completa y Auditoría de Código**:
-  - **Ubicación Fiel de Caramelos Especiales**: Corregido el algoritmo de generación en `Board.cs`. Al realizar un swap o combinación, el especial creado (rayado, envuelto o bomba de color) se posiciona exactamente en la casilla de destino `(targetX, targetY)` tocada por el jugador.
-  - **Limpieza y Estabilidad**: Auditoría de serialización, métodos auxiliares y eliminación de redundancias. Compilación limpia (0 advertencias, 0 errores en Debug y Release) y paso del 100% de la suite de pruebas del motor.
+8. **Manifiesto y Despliegue de Gala (`README.md` & GitHub Release)**:
+   - `CandyCrushAccessible.csproj` firmado con metadatos oficiales de **Narayan Projects**.
+   - `README.md` bilingüe creado en la raíz del proyecto.
+   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0-08.14.2026 publicado formalmente con binarios ejecutable y DLLs nativas.
 
 ---
 
-## Estado Actual del Código
+## Estado de Certificación Final
 
-### Tests: **TODOS PASAN** (Debug + Release)
-```
-Level 1-30 + Generados 31-60 + Licorice 8 + Orders 25/29 + Sugar Crush + Lives
-ALL TESTS PASSED
-```
-
-### Build: **OK** (0 warnings, 0 errors)
-
-### Funcionalidades Completas
-- [x] 30 niveles guionizados + infinitos procedurales (episodios 10 niveles)
-- [x] 5 tipos de nivel: Score, Jelly, Ingredient, Timed, Orders
-- [x] Obstáculos: Gelatina (simple/doble), Glaseado, Chocolate, Regaliz, Bombas
-- [x] Especiales: Rayado, Envuelto, Bomba color, Pez, combos
-- [x] Sugar Crush (ráfaga final con movimientos restantes)
-- [x] Vidas (regeneración 30 min, consumen solo al PERDER)
-- [x] Audio binaural 3D completo (pan, profundidad, barridos, explosiones)
-- [x] Navegación tablero con direcciones verbales ("Puedes intercambiar a la derecha con C2")
-- [x] Pista verbal (H) sin mover cursor
-- [x] Personaje Tiffi/Toffee al iniciar nivel (frases rotativas)
-- [x] Secuencia estrellas victoria (1/2/3-star.mp3)
-- [x] Música por episodio
-- [x] **Sistema lingotes + tienda + unlocks progresivos + bono diario**
-- [x] **Guardado persistente real**
-
----
-
-## Pendientes / Próximos Pasos
-
-### Prioridad Alta
-- [ ] **Configuración usuario para ambiente binaural** (toggle On/Off en Opciones)
-- [ ] Validación manual completa: partida real verificando audio 3D, navegación, tienda, persistencia
-
-### Prioridad Media
-- [ ] Tutorial interactivo actualizado con nuevo flujo boosters/tienda
-- [ ] Sonidos adicionales: compra exitosa, error compra, bono diario recogido (actualmente usan "klubb"/"invalid")
-- [ ] Indicador visual lingotes en HUD partida (badge esquina)
-
-### Prioridad Baja / Nice-to-Have
-- [ ] Logros/achievements (primer compra, racha diaria, etc.)
-- [ ] Paquetes de lingotes "oferta" (simular IAP sin pago real)
-- [ ] Estadísticas detalladas en menú (niveles jugados, oro ganado/gastado, boosters usados)
-
----
-
-## Archivos Clave para Continuar
-
-| Archivo | Responsabilidad |
-|---|---|
-| `src/Engine/Board.cs` | Motor tablero, detección matches, cascadas, estado nivel |
-| `src/Engine/GameProgress.cs` | **Persistencia, vidas, lingotes, boosters, unlocks, daily bonus** |
-| `src/Engine/Levels.cs` | Definición niveles 1-30 + generador procedural |
-| `src/Engine/Localization.cs` | **Todas las cadenas ES/EN** |
-| `src/Audio/SoundEngine.cs` | **Audio binaural 3D, secuencias, música** |
-| `src/Audio/AudioMap.cs` | Mapeo sonido -> archivo |
-| `src/UI/MainWindow.cs` | UI, teclado, pantallas, flujo juego, **Shop/Boosters/Fail integrados** |
-| `%TEMP%\opencode\engine_test\Program.cs` | Suite tests automatizados |
-
----
-
-## Notas para Próximos Asistentes
-
-1. **NUNCA** asumir que un sonido existe en `AudioMap.cs` — verificar antes de usar clave nueva
-2. **SIEMPRE** pasar coordenadas `(panCol, row)` a `SoundEngine.PlaySound()` para eventos espaciales
-3. Tests en `$env:TEMP\opencode\engine_test\` usan save temporal — no tocar save real del usuario
-4. `GameProgress.Load()` llama `TryCollectDailyBonus()` automáticamente al iniciar app
-5. Boosters en pantalla de selección **filtrados por `IsBoosterUnlocked()`** — no hardcodear lista
-6. Formato `status.format` usa 6 parámetros: nivel, score, target, objetivo, extra(jelly/ingredientes/orders/tiempo), movimientos
-
----
-
+- **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionados y generados).
+- **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026)
 ## Contacto / Referencias
-- Repo original: (local) `C:\Users\artik\Downloads\candy crush`
+- Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
+- Release v1.0: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.0-08.14.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
