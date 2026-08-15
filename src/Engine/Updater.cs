@@ -15,8 +15,14 @@ namespace CandyCrushAccessible.Engine
 
     public static class Updater
     {
-        public static string CurrentVersion = "1.0.2";
+        public static string CurrentVersion => GetLocalVersionString();
         public static UpdateInfo AvailableUpdate = null;
+
+        public static string GetLocalVersionString()
+        {
+            var v = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            return $"{v.Major}.{v.Minor}.{v.Build}";
+        }
 
         public static bool CheckConnection()
         {
@@ -24,12 +30,14 @@ namespace CandyCrushAccessible.Engine
             {
                 using (var client = new HttpClient { Timeout = TimeSpan.FromSeconds(3) })
                 {
+                    client.DefaultRequestHeaders.Add("User-Agent", "CandyCrushAccessible-Updater");
                     var response = client.Send(new HttpRequestMessage(HttpMethod.Head, "https://github.com"));
                     return response.IsSuccessStatusCode;
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("CheckConnection error: " + ex.Message);
                 return false;
             }
         }
@@ -48,8 +56,21 @@ namespace CandyCrushAccessible.Engine
                         var root = doc.RootElement;
                         string tag = root.GetProperty("tag_name").GetString();
                         string notes = root.TryGetProperty("body", out var bodyElem) ? bodyElem.GetString() : "";
-                        string cleanTag = tag.StartsWith("v") ? tag.Substring(1) : tag;
-                        if (cleanTag.Contains("-")) cleanTag = cleanTag.Split('-')[0];
+
+                        string cleanTag = tag.Replace("v", "").Replace("V", "").Trim();
+                        if (cleanTag.Contains("-"))
+                        {
+                            cleanTag = cleanTag.Split('-')[0];
+                        }
+
+                        if (!Version.TryParse(cleanTag, out Version onlineVersion))
+                        {
+                            System.Diagnostics.Debug.WriteLine("Failed to parse online version tag: " + tag);
+                            return null;
+                        }
+
+                        var asmVer = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+                        Version strictLocal = new Version(asmVer.Major, asmVer.Minor, asmVer.Build > 0 ? asmVer.Build : 0);
 
                         string downloadUrl = "";
                         if (root.TryGetProperty("assets", out var assetsElem) && assetsElem.ValueKind == JsonValueKind.Array)
@@ -65,7 +86,7 @@ namespace CandyCrushAccessible.Engine
                             }
                         }
 
-                        if (!string.IsNullOrEmpty(downloadUrl) && string.Compare(cleanTag, CurrentVersion, StringComparison.OrdinalIgnoreCase) > 0)
+                        if (!string.IsNullOrEmpty(downloadUrl) && onlineVersion > strictLocal)
                         {
                             AvailableUpdate = new UpdateInfo
                             {
@@ -78,8 +99,9 @@ namespace CandyCrushAccessible.Engine
                     }
                 }
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine("CheckForUpdatesAsync error: " + ex.ToString());
             }
             return null;
         }
