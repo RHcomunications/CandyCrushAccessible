@@ -2,5 +2,6 @@
 bin/
 obj/
 publish_out/
+sounds_legacy/
 src/bin/
 src/obj/
