@@ -1812,7 +1812,7 @@ timeout /t 2 /nobreak > nul
 
 echo.
 echo Extrayendo nueva version...
-powershell -ExecutionPolicy Bypass -Command ""$ProgressPreference = 'SilentlyContinue'; Expand-Archive -Path '{zipPath}' -DestinationPath '{appDir}' -Force"" > ""{logPath}"" 2>&1
+powershell -ExecutionPolicy Bypass -NoProfile -Command ""Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('{zipPath}', '{appDir}', $true)"" > ""{logPath}"" 2>&1
 
 IF %ERRORLEVEL% NEQ 0 (
     echo.
@@ -1843,7 +1843,7 @@ del ""%~f0""
                 WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal,
                 UseShellExecute = true
             });
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         private void DrawLoading(Graphics g)

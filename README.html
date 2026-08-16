@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.1.3</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.1.4</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,12 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.1.4 (16 de Agosto de 2026)</strong> — <strong>Balance Oficial de Puntuaciones y Blindaje de Actualizador</strong>:
+            <ul>
+                <li><strong>Tabla de Puntuaciones Oficial 2012</strong>: Rebalanceo de combos especiales (Bomba+Bomba +5,000 pts, Bomba+Especial +4,000 pts, Envuelto+Envuelto +3,500 pts, Rayado+Envuelto +3,000 pts, Rayado+Rayado +2,000 pts) y bonificaciones por despeje de obstáculos (Gelatina +1,000 pts, Glaseado/Regaliz/Chocolate +200 pts).</li>
+                <li><strong>Actualizador OTA Blindado</strong>: Cierre forzado inmediato (`Environment.Exit`) al iniciar la extracción y migración a `ZipFile.ExtractToDirectory` con sobreescritura garantizada para evitar bucles de actualización.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.3 (15 de Agosto de 2026)</strong> — <strong>Hotfix Crítico: Empaquetado Autocontenido Blindado</strong>:
             <ul>
                 <li>Integración nativa de <code>RuntimeIdentifier win-x64</code> y <code>SelfContained true</code> en el proyecto, garantizando el 100% de las librerías de .NET 8 (<code>coreclr.dll</code>, <code>clrjit.dll</code>, etc.) dentro del paquete para que el juego arranque sin requerir que el usuario tenga nada instalado.</li>
@@ -387,6 +393,12 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.1.4 (August 16, 2026)</strong> — <strong>Official 2012 Score Rebalancing &amp; Updater Shielding</strong>:
+            <ul>
+                <li><strong>2012 Score Table Calibration</strong>: Rebalanced special combos (Color Bomb + Color Bomb +5,000 pts, Color Bomb + Special +4,000 pts, Wrapped + Wrapped +3,500 pts, Striped + Wrapped +3,000 pts, Striped + Striped +2,000 pts) and obstacle clearing bonuses (Jelly +1,000 pts, Frosting/Licorice/Chocolate +200 pts).</li>
+                <li><strong>Hardened OTA Updater</strong>: Enforced immediate clean exit (`Environment.Exit`) before extraction and migrated to `ZipFile.ExtractToDirectory` with guaranteed overwrite, preventing loop notifications.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.3 (August 15, 2026)</strong> — <strong>Critical Hotfix: Bulletproof Standalone Packaging</strong>:
             <ul>
                 <li>Embedded <code>RuntimeIdentifier win-x64</code> and <code>SelfContained true</code> directly into the project manifest, ensuring 100% of required .NET 8 runtime binaries (<code>coreclr.dll</code>, <code>clrjit.dll</code>, etc.) are always bundled, allowing the game to run without requiring any pre-installed .NET runtimes.</li>

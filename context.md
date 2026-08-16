@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.1.3 Lanzamiento Oficial (15 de Agosto de 2026)  
+**Versión:** v1.1.4 Lanzamiento Oficial (16 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.3-08.15.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.4-08.16.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -126,6 +126,19 @@ src/
     - **Niveles de Ingredientes Explícitos**: Nombres claros (Cereza / Avellana), colocación garantizada desde el turno 1 (`y = 0`) y anuncio de coordenadas en tiempo real (`R` / `2`).
     - **Niveles de Pedidos Desglosados**: Objetivos detallados item por item con seguimiento individual de progreso.
 
+11. **Calibración de Puntuaciones Oficiales 2012 y Blindaje de Actualizador OTA**:
+    - **Tabla Oficial de Puntuaciones 2012**: Rebalanceo completo de combinaciones especiales:
+      - Bomba de Color + Bomba de Color: **+5,000 pts** (+ destrucción total de las 64 casillas).
+      - Bomba de Color + Caramelo Especial (Rayado/Envuelto): **+4,000 pts**.
+      - Caramelo Envuelto + Caramelo Envuelto: **+3,500 pts**.
+      - Caramelo Rayado + Caramelo Envuelto: **+3,000 pts**.
+      - Caramelo Rayado + Caramelo Rayado: **+2,000 pts**.
+      - Pez de Gelatina + Rayado / Envuelto: **+2,500 / +3,000 pts**.
+      - Destrucción de Gelatina: **+1,000 pts** por capa.
+      - Destrucción de Glaseado / Merengue, Regaliz y Chocolate: **+200 pts** por bloque.
+      - Destrucción básica de caramelos en cascada: **20 pts por caramelo * nivel de cascada** (60 pts para un match de 3).
+    - **Blindaje del Actualizador OTA**: Inserción de `Environment.Exit(0)` inmediato al lanzar el instalador temporal y migración a `[System.IO.Compression.ZipFile]::ExtractToDirectory(..., $true)` con sobreescritura nativa forzada.
+
 ---
 
 ## Regla de Oro: Esquema Oficial de Versionado Semántico (SemVer) y Despliegues
@@ -150,12 +163,12 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
    ```
 2. **Compilar y Empaquetar Standalone**:
    ```powershell
-   & "$env:LOCALAPPDATA\dotnet\dotnet.exe" publish "src\CandyCrushAccessible.csproj" -c Release -r win-x64 --self-contained true -o "bin\Publish_Standalone"
-   Compress-Archive -Path "bin\Publish_Standalone\*" -DestinationPath "CandyCrushAccessible-v1.2.0-Standalone.zip" -Force
+   & "$env:LOCALAPPDATA\dotnet\dotnet.exe" publish "src\CandyCrushAccessible.csproj" -c Release -o "publish_out"
+   Compress-Archive -Path "publish_out\*" -DestinationPath "CandyCrushAccessible-v1.2.0-Standalone.zip" -Force
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.1.2-08.15.2026 "CandyCrushAccessible-v1.1.2-Standalone.zip" --title "Candy Crush Accesible v1.1.2" --notes "Notas del parche..."
+   gh release create v1.1.4-08.16.2026 "CandyCrushAccessible-v1.1.4-Standalone.zip" --title "Candy Crush Accesible v1.1.4" --notes "Notas del parche..."
    ```
 
 ---
@@ -164,9 +177,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.3-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.3-08.15.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.3: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.3-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.3-08.15.2026)
+- Release v1.1.4: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`

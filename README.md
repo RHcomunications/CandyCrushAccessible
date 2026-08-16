@@ -34,6 +34,7 @@
   - `P` / `Esc`: Pause menu.
 
 ### Version History (Changelog)
+- **v1.1.4 (August 16, 2026)**: Calibrated 2012 scoring table for combos (Color Bomb + Color Bomb +5000, Bomb + Special +4000, Wrapped + Wrapped +3500, Striped + Wrapped +3000, Striped + Striped +2000) and obstacles (Jelly +1000, Frosting/Licorice/Chocolate +200), plus hardened OTA updater with `ZipFile.ExtractToDirectory` and immediate clean process shutdown.
 - **v1.1.3 (August 15, 2026)**: Critical standalone hotfix embedding `SelfContained` runtime directly into csproj to ensure 100% of .NET 8 runtime DLLs (`coreclr.dll`) are bundled without requiring pre-installed frameworks.
 - **v1.1.2 (August 15, 2026)**: Explicit ingredient names (cherries/nuts), guaranteed turn-1 board placement, real-time board tile coordinates (`R` / `2`), and detailed itemized order objectives.
 - **v1.1.1 (August 15, 2026)**: Added Tactical Booster Panel (`TAB` key) for in-game precision booster application, real-time live check (`V` key), human-readable Daily Bonus timer (hours/mins), and integrated `README.html` user manual.
@@ -75,6 +76,7 @@
   - `P` / `Esc`: Menú de pausa.
 
 ### Historial de Versiones
+- **v1.1.4 (16 de Agosto de 2026)**: Calibración oficial de la tabla de puntuaciones 2012 para combinaciones especiales (Bomba+Bomba +5000, Bomba+Especial +4000, Envuelto+Envuelto +3500, Rayado+Envuelto +3000, Rayado+Rayado +2000) y obstáculos (Gelatina +1000, Glaseado/Regaliz/Chocolate +200), y blindaje del actualizador OTA con `ZipFile.ExtractToDirectory` y cierre de proceso inmediato.
 - **v1.1.3 (15 de Agosto de 2026)**: Hotfix crítico de empaquetado autocontenido (SelfContained embebido en csproj) que incluye todas las librerías de .NET 8 (`coreclr.dll`) sin requerir runtime externo.
 - **v1.1.2 (15 de Agosto de 2026)**: Nombres explícitos de ingredientes (cerezas/avellanas), aparición garantizada desde el turno 1, anuncio en tiempo real de casillas en el tablero (`R` / `2`), y objetivos de pedidos desglosados item por item.
 - **v1.1.1 (15 de Agosto de 2026)**: Panel Táctico de Potenciadores in-game (tecla `TAB`), consulta de vidas en tiempo real (`V`), formato humanizado del bono diario en horas y minutos, y manual interactivo `README.html`.

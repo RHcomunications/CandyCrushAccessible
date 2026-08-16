@@ -693,7 +693,18 @@ namespace CandyCrushAccessible.Engine
 
             ProcessActivationQueue(result, toDestroy);
             ApplyDestroyedCells(result, toDestroy);
-            result.Score += 1000;
+            if (a.Special == SpecialType.ColorBomb && b.Special == SpecialType.ColorBomb)
+            {
+                result.Score += 5000;
+            }
+            else if (a.Special != SpecialType.None && b.Special != SpecialType.None)
+            {
+                result.Score += 4000;
+            }
+            else
+            {
+                result.Score += 1000;
+            }
         }
 
         private void DestroyAllColor(CandyColor color, SpecialType transform, TurnResult result, bool[,] toDestroy)
@@ -761,7 +772,34 @@ namespace CandyCrushAccessible.Engine
 
             ProcessActivationQueue(result, toDestroy);
             ApplyDestroyedCells(result, toDestroy);
-            result.Score += 500;
+            if (sa == SpecialType.Striped && sb == SpecialType.Striped)
+            {
+                result.Score += 2000;
+            }
+            else if ((sa == SpecialType.Striped && sb == SpecialType.Wrapped) || (sa == SpecialType.Wrapped && sb == SpecialType.Striped))
+            {
+                result.Score += 3000;
+            }
+            else if (sa == SpecialType.Wrapped && sb == SpecialType.Wrapped)
+            {
+                result.Score += 3500;
+            }
+            else if (sa == SpecialType.Fish && sb == SpecialType.Fish)
+            {
+                result.Score += 2000;
+            }
+            else if ((sa == SpecialType.Fish && sb == SpecialType.Striped) || (sa == SpecialType.Striped && sb == SpecialType.Fish))
+            {
+                result.Score += 2500;
+            }
+            else if ((sa == SpecialType.Fish && sb == SpecialType.Wrapped) || (sa == SpecialType.Wrapped && sb == SpecialType.Fish))
+            {
+                result.Score += 3000;
+            }
+            else
+            {
+                result.Score += 1500;
+            }
         }
 
         private void RunCascades(TurnResult result, int targetX = -1, int targetY = -1)
@@ -784,7 +822,7 @@ namespace CandyCrushAccessible.Engine
 
                 foreach (MatchGroup g in groups)
                 {
-                    int bonus = 60 * cascade;
+                    int bonus = 20 * cascade;
                     if (targetX >= 0 && targetY >= 0 && g.Cells.Contains(targetY * Cols + targetX))
                     {
                         g.CreateX = targetX;
@@ -827,7 +865,7 @@ namespace CandyCrushAccessible.Engine
                         switch (g.CreateType)
                         {
                             case SpecialType.Striped: result.Score += 120; break;
-                            case SpecialType.Wrapped: result.Score += 180; break;
+                            case SpecialType.Wrapped: result.Score += 200; break;
                             case SpecialType.ColorBomb: result.Score += 200; break;
                             case SpecialType.Fish: result.Score += 100; break;
                         }
@@ -940,6 +978,7 @@ namespace CandyCrushAccessible.Engine
             {
                 _frosting[x, y]--;
                 result.FrostingBroken++;
+                result.Score += 200;
                 return;
             }
 
@@ -950,6 +989,7 @@ namespace CandyCrushAccessible.Engine
                 _licorice[x, y] = false;
                 if (c != null) c.IsLicorice = false;
                 result.LicoriceBroken++;
+                result.Score += 200;
                 return;
             }
 
@@ -957,7 +997,7 @@ namespace CandyCrushAccessible.Engine
 
             toDestroy[x, y] = true;
             result.TotalCandyDestroyed++;
-            result.Score += 60 * cascade;
+            result.Score += 20 * cascade;
 
             if (c.IsTimeCandy) result.TimeGained += 5;
 
@@ -1061,6 +1101,7 @@ namespace CandyCrushAccessible.Engine
                     if (_chocolate[x, y])
                     {
                         _chocolate[x, y] = false;
+                        result.Score += 200;
                         continue;
                     }
                     Candy c = _grid[x, y];
@@ -1074,7 +1115,7 @@ namespace CandyCrushAccessible.Engine
                     }
                     else
                     {
-                        DamageAdjacentChocolate(x, y);
+                        DamageAdjacentChocolate(x, y, result);
                         DamageAdjacentFrosting(x, y, result);
                         DamageAdjacentLicorice(x, y, result);
                         if (_doubleJelly[x, y])
@@ -1082,11 +1123,13 @@ namespace CandyCrushAccessible.Engine
                             _doubleJelly[x, y] = false;
                             _jelly[x, y] = true;
                             result.JellyCleared++;
+                            result.Score += 1000;
                         }
                         else if (_jelly[x, y])
                         {
                             _jelly[x, y] = false;
                             result.JellyCleared++;
+                            result.Score += 1000;
                             RemainingJelly--;
                         }
                     }
@@ -1099,10 +1142,10 @@ namespace CandyCrushAccessible.Engine
 
         private void DamageAdjacentLicorice(int x, int y, TurnResult result)
         {
-            if (x > 0 && _licorice[x - 1, y]) { BreakLicorice(x - 1, y); result.LicoriceBroken++; }
-            if (x < Cols - 1 && _licorice[x + 1, y]) { BreakLicorice(x + 1, y); result.LicoriceBroken++; }
-            if (y > 0 && _licorice[x, y - 1]) { BreakLicorice(x, y - 1); result.LicoriceBroken++; }
-            if (y < Rows - 1 && _licorice[x, y + 1]) { BreakLicorice(x, y + 1); result.LicoriceBroken++; }
+            if (x > 0 && _licorice[x - 1, y]) { BreakLicorice(x - 1, y); result.LicoriceBroken++; result.Score += 200; }
+            if (x < Cols - 1 && _licorice[x + 1, y]) { BreakLicorice(x + 1, y); result.LicoriceBroken++; result.Score += 200; }
+            if (y > 0 && _licorice[x, y - 1]) { BreakLicorice(x, y - 1); result.LicoriceBroken++; result.Score += 200; }
+            if (y < Rows - 1 && _licorice[x, y + 1]) { BreakLicorice(x, y + 1); result.LicoriceBroken++; result.Score += 200; }
         }
 
         private void BreakLicorice(int x, int y)
@@ -1113,18 +1156,18 @@ namespace CandyCrushAccessible.Engine
 
         private void DamageAdjacentFrosting(int x, int y, TurnResult result)
         {
-            if (x > 0 && _frosting[x - 1, y] > 0) { _frosting[x - 1, y]--; result.FrostingBroken++; }
-            if (x < Cols - 1 && _frosting[x + 1, y] > 0) { _frosting[x + 1, y]--; result.FrostingBroken++; }
-            if (y > 0 && _frosting[x, y - 1] > 0) { _frosting[x, y - 1]--; result.FrostingBroken++; }
-            if (y < Rows - 1 && _frosting[x, y + 1] > 0) { _frosting[x, y + 1]--; result.FrostingBroken++; }
+            if (x > 0 && _frosting[x - 1, y] > 0) { _frosting[x - 1, y]--; result.FrostingBroken++; result.Score += 200; }
+            if (x < Cols - 1 && _frosting[x + 1, y] > 0) { _frosting[x + 1, y]--; result.FrostingBroken++; result.Score += 200; }
+            if (y > 0 && _frosting[x, y - 1] > 0) { _frosting[x, y - 1]--; result.FrostingBroken++; result.Score += 200; }
+            if (y < Rows - 1 && _frosting[x, y + 1] > 0) { _frosting[x, y + 1]--; result.FrostingBroken++; result.Score += 200; }
         }
 
-        private void DamageAdjacentChocolate(int x, int y)
+        private void DamageAdjacentChocolate(int x, int y, TurnResult result)
         {
-            if (x > 0 && _chocolate[x - 1, y]) _chocolate[x - 1, y] = false;
-            if (x < Cols - 1 && _chocolate[x + 1, y]) _chocolate[x + 1, y] = false;
-            if (y > 0 && _chocolate[x, y - 1]) _chocolate[x, y - 1] = false;
-            if (y < Rows - 1 && _chocolate[x, y + 1]) _chocolate[x, y + 1] = false;
+            if (x > 0 && _chocolate[x - 1, y]) { _chocolate[x - 1, y] = false; result.Score += 200; }
+            if (x < Cols - 1 && _chocolate[x + 1, y]) { _chocolate[x + 1, y] = false; result.Score += 200; }
+            if (y > 0 && _chocolate[x, y - 1]) { _chocolate[x, y - 1] = false; result.Score += 200; }
+            if (y < Rows - 1 && _chocolate[x, y + 1]) { _chocolate[x, y + 1] = false; result.Score += 200; }
         }
 
         private void GravityAndRefill(TurnResult result)
