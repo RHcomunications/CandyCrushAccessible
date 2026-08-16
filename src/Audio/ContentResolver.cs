@@ -92,16 +92,67 @@ namespace CandyCrushAccessible.Audio
 
         public static string SoundPath(string fileName)
         {
-            if (string.IsNullOrEmpty(SoundsDir)) return null;
-            string p = Path.Combine(SoundsDir, fileName);
-            return File.Exists(p) ? p : null;
+            if (string.IsNullOrEmpty(SoundsDir) || string.IsNullOrEmpty(fileName)) return null;
+
+            string[] extensions = { "", ".wav", ".ogg", ".mp3" };
+            string baseWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+            string[] variations = {
+                fileName,
+                baseWithoutExt,
+                baseWithoutExt.Replace("-", "_"),
+                baseWithoutExt.Replace("_", "-"),
+                baseWithoutExt.Replace(" ", "_"),
+                baseWithoutExt.Replace(" ", "-"),
+                baseWithoutExt.ToLowerInvariant().Replace(" ", "_"),
+                baseWithoutExt.ToLowerInvariant().Replace(" ", "-")
+            };
+
+            foreach (string v in variations)
+            {
+                foreach (string ext in extensions)
+                {
+                    string candidate = ext.Length > 0 ? v + ext : v;
+                    string p = Path.Combine(SoundsDir, candidate);
+                    if (File.Exists(p)) return p;
+                }
+            }
+
+            return null;
         }
 
         public static string MusicPath(string fileName)
         {
-            if (string.IsNullOrEmpty(MusicDir)) return null;
-            string p = Path.Combine(MusicDir, fileName);
-            return File.Exists(p) ? p : null;
+            if (string.IsNullOrEmpty(MusicDir) || string.IsNullOrEmpty(fileName)) return null;
+
+            string[] extensions = { "", ".ogg", ".mp3", ".wav" };
+            string baseWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+            string[] variations = {
+                fileName,
+                baseWithoutExt,
+                baseWithoutExt.Replace("-", "_"),
+                baseWithoutExt.Replace("_", "-"),
+                baseWithoutExt.Replace(" ", "_"),
+                baseWithoutExt.Replace(" ", "-"),
+                baseWithoutExt.ToLowerInvariant().Replace(" ", "_"),
+                baseWithoutExt.ToLowerInvariant().Replace(" ", "-")
+            };
+
+            foreach (string v in variations)
+            {
+                foreach (string ext in extensions)
+                {
+                    string candidate = ext.Length > 0 ? v + ext : v;
+                    string p = Path.Combine(MusicDir, candidate);
+                    if (File.Exists(p)) return p;
+                    if (!string.IsNullOrEmpty(SoundsDir))
+                    {
+                        string p2 = Path.Combine(SoundsDir, candidate);
+                        if (File.Exists(p2)) return p2;
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }
