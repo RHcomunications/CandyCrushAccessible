@@ -30,7 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="..\sounds\*.mp3;..\sounds\*.wav;..\sounds\*.ogg">
+    <EmbeddedResource Include="..\sounds_legacy\*.*">
       <LogicalName>$(RootNamespace).sounds.%(Filename)%(Extension)</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="..\music\*.mp3;..\music\*.wav;..\music\*.ogg">
