@@ -109,14 +109,30 @@ src/
 8. **Manifiesto y Despliegue de Gala (`README.md` & GitHub Release)**:
    - `CandyCrushAccessible.csproj` firmado con metadatos oficiales de **Narayan Projects**.
    - `README.md` bilingüe creado en la raíz del proyecto.
-   - Repositorio público sincronizado en `RHcomunications/CandyCrushAccessible` y Release v1.0.2-08.15.2026 publicada formalmente con el paquete de descarga unificado autocontenido `CandyCrushAccessible-v1.0.2-Standalone.zip`.
-   - Script de actualización `update.cmd` blindado con captura de ruta `exePath`, espera de 3 segundos, registro de salida en `update_log.txt` y pausa interactiva ante fallos.
+1. **Lenguaje / Framework**: C# (.NET 8.0, Windows Forms x64).
+2. **Audio**: BASS Audio Engine (`bass.dll` nativo) con `SoundEngine.cs` (cálculo de atenuación, volumen, paneo estereofónico y pitch dinámico por coordenadas).
+3. **Accesibilidad**: Interop C nativo de NVDA (`nvdaControllerClient64.dll`) + fallback a SAPI (`System.Speech.Synthesis`) en `Speech.cs`.
+4. **Motor de Juego (`src/Engine`)**:
+   - `Board.cs`: Cuadrícula 8x8, simulación de gravedad, cascadas, matches de 3/4/5, caramelos especiales, combos legendarios, obstáculos (gelatina, glaseado, chocolate, regaliz) e ingredientes (cerezas, avellanas).
+   - `Levels.cs`: Definición manual de los 65 niveles originales de 2012 + generador algorítmico infinito a partir del Nivel 66.
+   - `Progress.cs`: Persistencia atómica de progreso del jugador, puntuaciones máximas, estrellas, vidas, lingotes de oro, monedas y boosters.
+   - `Boosters.cs`: Definición y lógica de potenciadores (Martillo de Piruleta, Bomba de Color, Peces de Gelatina, Movimientos Extra, Tiempo Extra).
+   - `DailyBonus.cs`: Rueda de recompensas diaria persistente.
+   - `Updater.cs`: Comprobación automática de versiones contra la API pública de GitHub Releases con bypass de Rate-Limit HTTP y script `apply_update.cmd` para reinicio en caliente.
+5. **Interfaz Gráfica / Accesible (`src/UI`)**:
+   - `MainWindow.cs`: Bucle principal de eventos, máquina de estados de pantallas (`GameScreen`), renderizado GDI+ de alto contraste, navegación milimétrica por teclado y lector de coordenadas con audio espacial 3D.
+6. **Localización (`src/Localization`)**:
+   - `Localization.cs`: Diccionario bilingüe (Español e Inglés) para todas las cadenas de texto, mensajes de voz y consejos del Señor Toffee.
 
-9. **Auditoría Exhaustiva de Código y Optimización**:
-   - **Gestión de Memoria en `SoundEngine.cs`**: Liberación inmediata de punteros delegados `SyncProc` en `SyncDelegates` al concluir la reproducción del audio (`BASS_SYNC_END`), erradicando fugas de memoria en sesiones largas.
-   - **Regeneración de Vidas en Tiempo Real (`MainWindow.cs` & `GameProgress.cs`)**: El temporizador de interfaz ahora permanece activo en todas las pantallas (menú, opciones, tienda, mapa) permitiendo la regeneración de vidas de fondo sin reiniciar el tiempo restante ya acumulado.
-   - **Actualizador Asíncrono no Bloqueante (`Updater.cs`)**: `CheckConnectionAsync()` migrado a `HttpClient.SendAsync` sin congelar el hilo principal de la UI.
-   - **Lógica de Episodios y Finalización (`Episodes.cs`)**: Corrección del cálculo para niveles procedurales (>=66) y detección exacta de fin de episodio (`IsEndLevel`) para el Nivel 65 del Valle del Malvavisco.
+7. **Sonidos y Música**:
+   - 153 efectos de sonido y pistas musicales auténticas de King (2012) organizados en `sounds_legacy/`.
+
+8. **Control de Vidas y Economía**:
+   - 5 vidas máximas, regeneración pasiva de 1 vida cada 30 minutos (incluso con el juego cerrado).
+   - Bono diario cada 24 horas.
+
+9. **Actualizador OTA Integrado**:
+   - Chequeo al inicio y opción manual en el menú de Opciones.
 
 10. **Panel Táctico, Calidad de Vida y Claridad Total en Niveles**:
     - **Panel Táctico de Potenciadores (Tecla `TAB`)**: Despliegue de panel contextual durante la partida para aplicar martillos, bombas de color, peces de gelatina, movimientos extra y tiempo extra en casillas exactas.
@@ -138,6 +154,11 @@ src/
       - Destrucción de Glaseado / Merengue, Regaliz y Chocolate: **+200 pts** por bloque.
       - Destrucción básica de caramelos en cascada: **20 pts por caramelo * nivel de cascada** (60 pts para un match de 3).
     - **Blindaje del Actualizador OTA**: Inserción de `Environment.Exit(0)` inmediato al lanzar el instalador temporal y migración a `[System.IO.Compression.ZipFile]::ExtractToDirectory(..., $true)` con sobreescritura nativa forzada.
+
+12. **Preservación Histórica 2012 y Suite de Pruebas de Humo Automatizada**:
+    - **Integración Nativa `sounds_legacy`**: Todos los 153 archivos de audio auténticos de 2012 mapeados 1 a 1 en `AudioMap.cs`.
+    - **Banda Sonora Contextual (OST 2012)**: Asignación dinámica en `MusicMap.cs` para Menú (`loop_1`), Victoria (`outro1`), Derrota (`intro2`), Puntuación/Gelatina (`loop5`), Pedidos (`soundtrack2`), Tiempo (`soundtrack3`) e Ingredientes (`soundtrack4`).
+    - **Smoke Test Automatizado (`tests/SmokeTest`)**: Suite de validación automatizada que certifica 100% de éxito en resolución de sonidos, instanciación de 65 niveles y colocación táctica de potenciadores.
 
 ---
 
@@ -168,18 +189,18 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.1.4-08.16.2026 "CandyCrushAccessible-v1.1.4-Standalone.zip" --title "Candy Crush Accesible v1.1.4" --notes "Notas del parche..."
+   gh release create v1.1.5-08.16.2026 "CandyCrushAccessible-v1.1.5-Standalone.zip" --title "Candy Crush Accesible v1.1.5" --notes "Notas del parche..."
    ```
 
 ---
 
 ## Estado de Certificación Final
 
-- **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
+- **Tests Automatizados (`tests/SmokeTest`)**: **ALL TESTS PASSED (100% OK, 0 Errores)**.
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.4: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.4-08.16.2026)
-- Audio assets: `C:\Users\artik\Downloads\candy crush\sounds\`
+- Release v1.1.5: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026)
+- Audio assets: `C:\Users\artik\Downloads\candy crush\sounds_legacy\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
