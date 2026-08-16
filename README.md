@@ -34,6 +34,7 @@
   - `P` / `Esc`: Pause menu.
 
 ### Version History (Changelog)
+- **v1.1.2 (August 15, 2026)**: Explicit ingredient names (cherries/nuts), guaranteed turn-1 board placement, real-time board tile coordinates (`R` / `2`), and detailed itemized order objectives.
 - **v1.1.1 (August 15, 2026)**: Added Tactical Booster Panel (`TAB` key) for in-game precision booster application, real-time live check (`V` key), human-readable Daily Bonus timer (hours/mins), and integrated `README.html` user manual.
 - **v1.1.0 (August 15, 2026)**: Major OTA updater hotfix (strict SemVer upgrade to `1.1.0` resolving prior build math comparisons, active process wait loop and audio device shutdown in `apply_update.cmd`).
 - **v1.0.3 (August 15, 2026)**: Fixed BASS PInvoke delegate memory cleanup on `BASS_SYNC_END`, continuous background life regeneration across all screens, and Level 65 end-of-episode transition to procedural mode.
@@ -73,6 +74,7 @@
   - `P` / `Esc`: Menú de pausa.
 
 ### Historial de Versiones
+- **v1.1.2 (15 de Agosto de 2026)**: Nombres explícitos de ingredientes (cerezas/avellanas), aparición garantizada desde el turno 1, anuncio en tiempo real de casillas en el tablero (`R` / `2`), y objetivos de pedidos desglosados item por item.
 - **v1.1.1 (15 de Agosto de 2026)**: Panel Táctico de Potenciadores in-game (tecla `TAB`), consulta de vidas en tiempo real (`V`), formato humanizado del bono diario en horas y minutos, y manual interactivo `README.html`.
 - **v1.1.0 (15 de Agosto de 2026)**: Hotfix mayor del actualizador OTA (salto a versión `1.1.0`, espera activa de proceso y liberación de controladores BASS antes de extraer).
 - **v1.0.3 (15 de Agosto de 2026)**: Optimización de memoria en delegados BASS (`BASS_SYNC_END`), regeneración de vidas en segundo plano en todas las pantallas, y fanfarria de fin de episodio en Nivel 65.

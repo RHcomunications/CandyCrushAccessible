@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.1.1 Lanzamiento Oficial (15 de Agosto de 2026)  
+**Versión:** v1.1.2 Lanzamiento Oficial (15 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
-**Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.1-08.15.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.2-08.15.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -117,7 +117,14 @@ src/
    - **Regeneración de Vidas en Tiempo Real (`MainWindow.cs` & `GameProgress.cs`)**: El temporizador de interfaz ahora permanece activo en todas las pantallas (menú, opciones, tienda, mapa) permitiendo la regeneración de vidas de fondo sin reiniciar el tiempo restante ya acumulado.
    - **Actualizador Asíncrono no Bloqueante (`Updater.cs`)**: `CheckConnectionAsync()` migrado a `HttpClient.SendAsync` sin congelar el hilo principal de la UI.
    - **Lógica de Episodios y Finalización (`Episodes.cs`)**: Corrección del cálculo para niveles procedurales (>=66) y detección exacta de fin de episodio (`IsEndLevel`) para el Nivel 65 del Valle del Malvavisco.
-   - **Localización y Lectura de Tablero (`Localization.cs` & `MainWindow.cs`)**: Claves de demostración del tutorial (`special.striped`, `special.wrapped`, `special.colorbomb`) y lectura fonética de columnas por letras (A-H).
+
+10. **Panel Táctico, Calidad de Vida y Claridad Total en Niveles**:
+    - **Panel Táctico de Potenciadores (Tecla `TAB`)**: Despliegue de panel contextual durante la partida para aplicar martillos, bombas de color, peces de gelatina, movimientos extra y tiempo extra en casillas exactas.
+    - **Consulta de Vidas en Tiempo Real (Tecla `V`)**: Anuncio exacto de minutos y segundos restantes para la siguiente vida.
+    - **Bono Diario Humanizado**: Formato en horas y minutos (`18h y 45m`).
+    - **Manual de Usuario Integrado (`README.html`)**: Manual estilizado interactivo bilingüe (ES/EN) empaquetado en la raíz del juego.
+    - **Niveles de Ingredientes Explícitos**: Nombres claros (Cereza / Avellana), colocación garantizada desde el turno 1 (`y = 0`) y anuncio de coordenadas en tiempo real (`R` / `2`).
+    - **Niveles de Pedidos Desglosados**: Objetivos detallados item por item con seguimiento individual de progreso.
 
 ---
 
@@ -148,7 +155,7 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.2.0-12.24.2026 "CandyCrushAccessible-v1.2.0-Standalone.zip" --title "Candy Crush Accesible v1.2.0 (Especial Navideño)" --notes "Notas del parche..."
+   gh release create v1.1.2-08.15.2026 "CandyCrushAccessible-v1.1.2-Standalone.zip" --title "Candy Crush Accesible v1.1.2" --notes "Notas del parche..."
    ```
 
 ---
@@ -157,9 +164,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`EngineTest.csproj`)**: **ALL TESTS PASSED** (Simulación completa de los 65 niveles guionizados y generados).
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.1-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.1-08.15.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.2-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.2-08.15.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.1: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.1-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.1-08.15.2026)
+- Release v1.1.2: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.2-08.15.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.2-08.15.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
