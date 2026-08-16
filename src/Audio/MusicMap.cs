@@ -1,46 +1,52 @@
 using System;
-using System.Collections.Generic;
+using CandyCrushAccessible.Engine;
 
 namespace CandyCrushAccessible.Audio
 {
     public enum MusicTrack
     {
         Menu,
-        Gameplay,
         Win,
-        Lose
+        Lose,
+        ScoreAndJelly,
+        Order,
+        Timed,
+        Ingredient
     }
 
     public static class MusicMap
     {
-        private static readonly string[] GameplayTracks =
-        {
-            "Candy Crush Loop 5.mp3",
-            "Candy Crush Soundtrack 2.mp3",
-            "Candy Crush Soundtrack 3.mp3",
-            "Candy Crush Soundtrack 4.mp3",
-            "Sa Game Mode Mixed Modes Loop.mp3"
-        };
-
-        private static readonly Random Rng = new Random();
-
         public static string FileName(MusicTrack track)
         {
             switch (track)
             {
-                case MusicTrack.Menu: return "Candy Crush Menu.mp3";
-                case MusicTrack.Gameplay:
-                    return GameplayTracks[Rng.Next(GameplayTracks.Length)];
-                case MusicTrack.Win: return "Candy Crush Win.mp3";
-                case MusicTrack.Lose: return "Candy Crush Lose.mp3";
+                case MusicTrack.Menu: return "candy_crush_saga_loop_1";
+                case MusicTrack.Win: return "candy_crush_outro1";
+                case MusicTrack.Lose: return "candy_crush_intro2";
+                case MusicTrack.ScoreAndJelly: return "candy_crush_loop5";
+                case MusicTrack.Order: return "candy_crush_soundtrack2";
+                case MusicTrack.Timed: return "candy_crush_soundtrack3";
+                case MusicTrack.Ingredient: return "candy_crush_soundtrack4";
             }
-            return null;
+            return "candy_crush_saga_loop_1";
         }
 
-        public static string EpisodeFileName(int episodeNumber)
+        public static string GetTrackForLevelType(LevelType type)
         {
-            int idx = ((episodeNumber - 1) % GameplayTracks.Length + GameplayTracks.Length) % GameplayTracks.Length;
-            return GameplayTracks[idx];
+            switch (type)
+            {
+                case LevelType.Score:
+                case LevelType.Jelly:
+                    return "candy_crush_loop5";
+                case LevelType.Order:
+                    return "candy_crush_soundtrack2";
+                case LevelType.Timed:
+                    return "candy_crush_soundtrack3";
+                case LevelType.Ingredient:
+                    return "candy_crush_soundtrack4";
+                default:
+                    return "candy_crush_loop5";
+            }
         }
     }
 }

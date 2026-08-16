@@ -171,7 +171,7 @@ namespace CandyCrushAccessible.UI
                 SoundEngine.PlayMusic(MusicTrack.Menu);
                 AnnounceMenu(MainMenuItems[_menuIndex]);
             }
-            else if (s == GameScreen.LevelMap)
+            else if (s == GameScreen.LevelMap || s == GameScreen.Shop || s == GameScreen.Options || s == GameScreen.Tutorial || s == GameScreen.Boosters)
             {
                 SoundEngine.PlayMusic(MusicTrack.Menu);
             }
@@ -1158,7 +1158,7 @@ namespace CandyCrushAccessible.UI
         private void HandleWin()
         {
             SoundEngine.PlaySound("win");
-            SoundEngine.PlayMusic(MusicTrack.Win);
+            SoundEngine.PlayMusic(MusicTrack.Win, loop: false);
             int moves = _board.MovesLeft;
             if (moves > 0)
             {
@@ -1205,7 +1205,7 @@ namespace CandyCrushAccessible.UI
         private void HandleLose()
         {
             SoundEngine.PlaySound("lose");
-            SoundEngine.PlayMusic(MusicTrack.Lose);
+            SoundEngine.PlayMusic(MusicTrack.Lose, loop: false);
             _pauseIndex = 0;
             string msg = _board.Level.Type == LevelType.Timed
                 ? Localization.Get("msg.lose.time")
@@ -1317,7 +1317,7 @@ namespace CandyCrushAccessible.UI
             _frostingClearedAnnounced = false;
             ClearSelection();
             SwitchScreen(GameScreen.Playing);
-            SoundEngine.PlayEpisodeMusic(Episodes.GetForLevel(levelNumber).Number);
+            SoundEngine.PlayLevelMusic(_board.Level.Type);
             SoundEngine.PlayBinauralAmbientShimmer();
 
             List<string> applied = new List<string>();
@@ -1371,7 +1371,7 @@ namespace CandyCrushAccessible.UI
                 _board.AddMoves(extraMoves);
             }
             SwitchScreen(GameScreen.Playing);
-            SoundEngine.PlayEpisodeMusic(Episodes.GetForLevel(_levelNumber).Number);
+            SoundEngine.PlayLevelMusic(_board.Level.Type);
             SoundEngine.PlayBinauralAmbientShimmer();
             string msg = string.Format(Localization.Get("extra.moves.purchased"), extraMoves) + ". " +
                 string.Format(Localization.Get("moves.count"), _board != null ? _board.MovesLeft : extraMoves);

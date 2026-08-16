@@ -7,6 +7,7 @@ namespace CandyCrushAccessible.Audio
     public static class ContentResolver
     {
         public static string SoundsDir;
+        public static string SoundsLegacyDir;
         public static string MusicDir;
 
         public static void Initialize()
@@ -24,6 +25,22 @@ namespace CandyCrushAccessible.Audio
                 if (Directory.Exists(c))
                 {
                     SoundsDir = Path.GetFullPath(c);
+                    break;
+                }
+            }
+
+            string[] legacyCandidates = {
+                Path.Combine(exeDir, "sounds_legacy"),
+                Path.Combine(exeDir, "..", "sounds_legacy"),
+                Path.Combine(exeDir, "..", "..", "sounds_legacy"),
+                Path.Combine(exeDir, "..", "..", "..", "sounds_legacy"),
+                Path.Combine(Directory.GetCurrentDirectory(), "sounds_legacy")
+            };
+            foreach (string c in legacyCandidates)
+            {
+                if (Directory.Exists(c))
+                {
+                    SoundsLegacyDir = Path.GetFullPath(c);
                     break;
                 }
             }
@@ -112,8 +129,16 @@ namespace CandyCrushAccessible.Audio
                 foreach (string ext in extensions)
                 {
                     string candidate = ext.Length > 0 ? v + ext : v;
-                    string p = Path.Combine(SoundsDir, candidate);
-                    if (File.Exists(p)) return p;
+                    if (!string.IsNullOrEmpty(SoundsDir))
+                    {
+                        string p = Path.Combine(SoundsDir, candidate);
+                        if (File.Exists(p)) return p;
+                    }
+                    if (!string.IsNullOrEmpty(SoundsLegacyDir))
+                    {
+                        string p = Path.Combine(SoundsLegacyDir, candidate);
+                        if (File.Exists(p)) return p;
+                    }
                 }
             }
 
@@ -122,7 +147,7 @@ namespace CandyCrushAccessible.Audio
 
         public static string MusicPath(string fileName)
         {
-            if (string.IsNullOrEmpty(MusicDir) || string.IsNullOrEmpty(fileName)) return null;
+            if (string.IsNullOrEmpty(fileName)) return null;
 
             string[] extensions = { "", ".ogg", ".mp3", ".wav" };
             string baseWithoutExt = Path.GetFileNameWithoutExtension(fileName);
@@ -142,12 +167,20 @@ namespace CandyCrushAccessible.Audio
                 foreach (string ext in extensions)
                 {
                     string candidate = ext.Length > 0 ? v + ext : v;
-                    string p = Path.Combine(MusicDir, candidate);
-                    if (File.Exists(p)) return p;
+                    if (!string.IsNullOrEmpty(MusicDir))
+                    {
+                        string p = Path.Combine(MusicDir, candidate);
+                        if (File.Exists(p)) return p;
+                    }
                     if (!string.IsNullOrEmpty(SoundsDir))
                     {
                         string p2 = Path.Combine(SoundsDir, candidate);
                         if (File.Exists(p2)) return p2;
+                    }
+                    if (!string.IsNullOrEmpty(SoundsLegacyDir))
+                    {
+                        string p3 = Path.Combine(SoundsLegacyDir, candidate);
+                        if (File.Exists(p3)) return p3;
                     }
                 }
             }

@@ -104,7 +104,7 @@ namespace CandyCrushAccessible.Audio
             set { _voiceVolume = value; }
         }
 
-        public static void PlayMusic(MusicTrack track)
+        public static void PlayMusic(MusicTrack track, bool loop = true)
         {
             if (!_initialized) return;
             StopMusic();
@@ -112,17 +112,19 @@ namespace CandyCrushAccessible.Audio
             if (file == null) return;
             string path = ContentResolver.MusicPath(file);
             if (path == null) return;
-            _musicHandle = BASS_StreamCreateFile(false, path, 0, 0, BASS_SAMPLE_LOOP | BASS_UNICODE);
+            uint flags = BASS_UNICODE;
+            if (loop) flags |= BASS_SAMPLE_LOOP;
+            _musicHandle = BASS_StreamCreateFile(false, path, 0, 0, flags);
             if (_musicHandle == 0) return;
             BASS_ChannelSetAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume);
             BASS_ChannelPlay(_musicHandle, false);
         }
 
-        public static void PlayEpisodeMusic(int episodeNumber)
+        public static void PlayLevelMusic(LevelType levelType)
         {
             if (!_initialized) return;
             StopMusic();
-            string file = MusicMap.EpisodeFileName(episodeNumber);
+            string file = MusicMap.GetTrackForLevelType(levelType);
             if (file == null) return;
             string path = ContentResolver.MusicPath(file);
             if (path == null) return;
