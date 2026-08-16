@@ -24,6 +24,8 @@
     <None Include="native\bass.dll" CopyToOutputDirectory="PreserveNewest" Link="bass.dll" />
     <None Include="native\nvdaControllerClient32.dll" CopyToOutputDirectory="PreserveNewest" Link="nvdaControllerClient32.dll" />
     <None Include="native\nvdaControllerClient64.dll" CopyToOutputDirectory="PreserveNewest" Link="nvdaControllerClient64.dll" />
+    <None Include="..\README.html" CopyToOutputDirectory="PreserveNewest" Link="README.html" />
+    <None Include="..\README.md" CopyToOutputDirectory="PreserveNewest" Link="README.md" />
   </ItemGroup>
 
   <ItemGroup>
