@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.1.5</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.1.6</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,11 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.1.6 (16 de Agosto de 2026)</strong> — <strong>Hotfix del Actualizador OTA (Extracción Blindada)</strong>:
+            <ul>
+                <li>Corrección del script de actualización para utilizar <code>tar.exe -xf</code> nativo de Windows con fallback a <code>Expand-Archive -LiteralPath -Force</code>, eliminando por completo el fallo de incompatibilidad de tipos (<code>System.Text.Encoding</code> vs <code>Boolean</code>) en PowerShell 5.1.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.5 (16 de Agosto de 2026)</strong> — <strong>Preservación Histórica 2012 y Banda Sonora Auténtica</strong>:
             <ul>
                 <li><strong>Preservación Sonora Original 100%</strong>: Integración nativa de los 153 assets originales extraídos directamente del APK clásico de 2012 en <code>sounds_legacy/</code>, garantizando el audio más fiel, puro y nostálgico.</li>
@@ -400,6 +405,11 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.1.6 (August 16, 2026)</strong> — <strong>OTA Updater Extraction Hotfix</strong>:
+            <ul>
+                <li>Fixed updater extraction command in <code>apply_update.cmd</code> by leveraging native Windows <code>tar.exe -xf</code> with automated fallback to <code>Expand-Archive -LiteralPath -Force</code>, resolving PowerShell 5.1 / .NET Framework type cast incompatibility.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.5 (August 16, 2026)</strong> — <strong>100% 2012 Historical Sound Preservation &amp; OST Mapping</strong>:
             <ul>
                 <li><strong>Byte-for-Byte 2012 Audio Preservation</strong>: Direct integration of all 153 authentic sound assets extracted directly from the classic 2012 APK in <code>sounds_legacy/</code>, preserving authentic retro fidelity.</li>

@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.1.5 Lanzamiento Oficial (16 de Agosto de 2026)  
+**Versión:** v1.1.6 Lanzamiento Oficial (16 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.5-08.16.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.6-08.16.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -160,6 +160,10 @@ src/
     - **Banda Sonora Contextual (OST 2012)**: Asignación dinámica en `MusicMap.cs` para Menú (`loop_1`), Victoria (`outro1`), Derrota (`intro2`), Puntuación/Gelatina (`loop5`), Pedidos (`soundtrack2`), Tiempo (`soundtrack3`) e Ingredientes (`soundtrack4`).
     - **Smoke Test Automatizado (`tests/SmokeTest`)**: Suite de validación automatizada que certifica 100% de éxito en resolución de sonidos, instanciación de 65 niveles y colocación táctica de potenciadores.
 
+13. **Hotfix Crítico del Actualizador OTA (Extracción Blindada sin Errores de Tipo)**:
+    - **Diagnóstico**: En Windows PowerShell 5.1, `[System.IO.Compression.ZipFile]::ExtractToDirectory(zip, dir, $true)` fallaba intentando convertir `$true` a `System.Text.Encoding` al no disponer de la sobrecarga de 3 parámetros de .NET Core.
+    - **Solución Blindada**: Migración a `tar.exe -xf` nativo de Windows (estándar en Windows 10/11) con fallback automático y seguro a `Expand-Archive -LiteralPath -Force`, garantizando extracción atómica y reinicio perfecto sin bloqueos ni errores.
+
 ---
 
 ## Regla de Oro: Esquema Oficial de Versionado Semántico (SemVer) y Despliegues
@@ -189,7 +193,7 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.1.5-08.16.2026 "CandyCrushAccessible-v1.1.5-Standalone.zip" --title "Candy Crush Accesible v1.1.5" --notes "Notas del parche..."
+   gh release create v1.1.6-08.16.2026 "CandyCrushAccessible-v1.1.6-Standalone.zip" --title "Candy Crush Accesible v1.1.6" --notes "Notas del parche..."
    ```
 
 ---
@@ -198,9 +202,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`tests/SmokeTest`)**: **ALL TESTS PASSED (100% OK, 0 Errores)**.
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.6-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.6-08.16.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.5: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.5-08.16.2026)
+- Release v1.1.6: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.6-08.16.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.6-08.16.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds_legacy\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`

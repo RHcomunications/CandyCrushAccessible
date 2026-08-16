@@ -1812,7 +1812,10 @@ timeout /t 2 /nobreak > nul
 
 echo.
 echo Extrayendo nueva version...
-powershell -ExecutionPolicy Bypass -NoProfile -Command ""Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::ExtractToDirectory('{zipPath}', '{appDir}', $true)"" > ""{logPath}"" 2>&1
+tar -xf ""{zipPath}"" -C ""{appDir}"" > ""{logPath}"" 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    powershell -ExecutionPolicy Bypass -NoProfile -Command ""$ProgressPreference = 'SilentlyContinue'; Expand-Archive -LiteralPath '{zipPath}' -DestinationPath '{appDir}' -Force"" > ""{logPath}"" 2>&1
+)
 
 IF %ERRORLEVEL% NEQ 0 (
     echo.
