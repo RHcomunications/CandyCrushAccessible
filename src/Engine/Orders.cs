@@ -47,6 +47,12 @@ namespace CandyCrushAccessible.Engine
             }
             return "";
         }
+
+        public string DescribeProgress()
+        {
+            string name = Describe();
+            return string.Format(Localization.Get("order.progress.item"), Filled, Count, name);
+        }
     }
 
     public static class OrderFactory

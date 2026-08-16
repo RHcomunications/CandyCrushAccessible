@@ -22,6 +22,7 @@ namespace CandyCrushAccessible.Engine
         public int TargetScore = 1000;
         public int TargetJelly;
         public int TargetIngredients;
+        public IngredientType TargetIngredientType = IngredientType.Cherry;
         public int NumColors = 5;
         public bool AllBoardJelly;
         public bool HasBombs;
@@ -47,18 +48,19 @@ namespace CandyCrushAccessible.Engine
                     case LevelType.Jelly:
                         return string.Format(Localization.Get("obj.jelly"), Moves);
                     case LevelType.Ingredient:
-                        return string.Format(Localization.Get("obj.ingredient"), TargetIngredients, Moves);
+                        string ingName = TargetIngredientType == IngredientType.Nut ? Localization.Get("ingredient.nut") : Localization.Get("ingredient.cherry");
+                        return string.Format(Localization.Get("obj.ingredient"), TargetIngredients, ingName, Moves);
                     case LevelType.Timed:
                         return string.Format(Localization.Get("obj.timed"), TargetScore, TimeSeconds);
                     case LevelType.Order:
                         {
-                            StringBuilder sb = new StringBuilder();
-                            sb.Append(string.Format(Localization.Get("obj.order"), Moves));
-                            if (Orders != null)
+                            if (Orders != null && Orders.Count > 0)
                             {
-                                foreach (LevelOrder o in Orders) sb.Append(". ").Append(o.Describe());
+                                List<string> parts = new List<string>();
+                                foreach (LevelOrder o in Orders) parts.Add(o.Describe());
+                                return string.Format(Localization.Get("obj.order.specific"), string.Join(", ", parts), Moves);
                             }
-                            return sb.ToString();
+                            return string.Format(Localization.Get("obj.order"), Moves);
                         }
                 }
                 return "";
@@ -195,6 +197,7 @@ namespace CandyCrushAccessible.Engine
                     break;
                 case LevelType.Ingredient:
                     l.TargetIngredients = Math.Min(3, 1 + d / 6 + rng.Next(0, 2));
+                    l.TargetIngredientType = rng.Next(2) == 0 ? IngredientType.Nut : IngredientType.Cherry;
                     l.Moves = moves + 5;
                     l.TargetScore = 15000 + d * 300;
                     l.HasBombs = rng.Next(3) == 0;
@@ -268,6 +271,7 @@ namespace CandyCrushAccessible.Engine
             l.Number = n;
             l.Type = LevelType.Ingredient;
             l.TargetIngredients = count;
+            l.TargetIngredientType = nut ? IngredientType.Nut : IngredientType.Cherry;
             l.Moves = moves;
             l.NumColors = colors;
             l.TargetScore = 15000;

@@ -1283,6 +1283,10 @@ namespace CandyCrushAccessible.UI
         private void AnnounceSpecials()
         {
             List<string> list = _board.GetSpecialPositions();
+            if (_board.Level.Type == LevelType.Ingredient)
+            {
+                list.Add(_board.GetIngredientsLocationText());
+            }
             if (list.Count == 0)
             {
                 Speech.Speak(Localization.Get("none"));
@@ -1335,7 +1339,12 @@ namespace CandyCrushAccessible.UI
             }
             else
             {
-                string msg = Localization.Get("menu.level") + " " + levelNumber + ". " + _board.Level.ObjectiveText + ". " +
+                string objMsg = _board.Level.ObjectiveText;
+                if (_board.Level.Type == LevelType.Ingredient)
+                {
+                    objMsg += ". " + _board.GetIngredientsLocationText();
+                }
+                string msg = Localization.Get("menu.level") + " " + levelNumber + ". " + objMsg + ". " +
                     string.Format(Localization.Get("lives.count"), _progress.Lives);
                 if (!_progress.BestStars.ContainsKey(levelNumber))
                 {

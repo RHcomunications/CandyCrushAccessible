@@ -251,24 +251,22 @@ namespace CandyCrushAccessible.Engine
         private void SpawnIngredientAtTop()
         {
             if (_spawnedIngredients >= _level.TargetIngredients) return;
-            int x = _rng.Next(Cols);
-            if (_grid[x, 0] != null)
+            List<int> validCols = new List<int>();
+            for (int col = 0; col < Cols; col++)
             {
-                for (int i = 0; i < Cols; i++)
+                if (!_chocolate[col, 0] && !HasFrosting(col, 0) && (_grid[col, 0] == null || !_grid[col, 0].IsLicorice))
                 {
-                    if (_grid[i, 0] == null) { x = i; break; }
+                    validCols.Add(col);
                 }
             }
-            if (_grid[x, 0] != null) return;
+            int x = validCols.Count > 0 ? validCols[_rng.Next(validCols.Count)] : _rng.Next(Cols);
+            IngredientType ingType = _level.TargetIngredientType;
+            if (ingType == IngredientType.None)
+            {
+                ingType = _level.Number >= 24 ? IngredientType.Nut : IngredientType.Cherry;
+            }
             Candy c = new Candy(CandyColor.Red);
-            if (_level.Number >= 24)
-            {
-                c.Ingredient = IngredientType.Nut;
-            }
-            else
-            {
-                c.Ingredient = IngredientType.Cherry;
-            }
+            c.Ingredient = ingType;
             _grid[x, 0] = c;
             _spawnedIngredients++;
         }
@@ -1626,6 +1624,24 @@ namespace CandyCrushAccessible.Engine
             return sb.ToString();
         }
 
+        public string GetIngredientsLocationText()
+        {
+            List<string> locs = new List<string>();
+            for (int x = 0; x < Cols; x++)
+            {
+                for (int y = 0; y < Rows; y++)
+                {
+                    Candy c = _grid[x, y];
+                    if (c != null && c.IsIngredient)
+                    {
+                        locs.Add(Localization.I(c.Ingredient) + " en " + CellName(x, y) + " (fila " + (y + 1) + " de " + Rows + ")");
+                    }
+                }
+            }
+            if (locs.Count == 0) return Localization.Get("ingredient.none.onboard");
+            return string.Format(Localization.Get("ingredient.board.locations"), string.Join(", ", locs));
+        }
+
         public string StatusText()
         {
             string obj = _level.ObjectiveText;
@@ -1643,18 +1659,23 @@ namespace CandyCrushAccessible.Engine
                 case LevelType.Ingredient:
                     int totalIng = _level.TargetIngredients;
                     int collectedIng = totalIng - IngredientsRemaining;
-                    int ingPct = totalIng > 0 ? (int)Math.Round((double)collectedIng / totalIng * 100.0) : 100;
-                    extra = string.Format(Localization.Get("ingredient.status.detail"), IngredientsRemaining, totalIng, ingPct);
+                    string ingLocations = GetIngredientsLocationText();
+                    extra = string.Format(Localization.Get("ingredient.status.detail"), collectedIng, totalIng, ingLocations);
                     break;
                 case LevelType.Timed:
                     int timePct = _level.TimeSeconds > 0 ? (int)Math.Round((double)TimeLeft / _level.TimeSeconds * 100.0) : 0;
                     extra = string.Format(Localization.Get("timed.status.detail"), (int)Math.Ceiling(TimeLeft), (int)_level.TimeSeconds, timePct);
                     break;
                 case LevelType.Order:
-                    int totalOrders = Orders.Count;
-                    int fulfilled = OrdersFulfilled;
-                    int orderPct = totalOrders > 0 ? (int)Math.Round((double)fulfilled / totalOrders * 100.0) : 100;
-                    extra = string.Format(Localization.Get("order.status.detail"), fulfilled, totalOrders, orderPct, OrdersRemaining);
+                    List<string> orderProg = new List<string>();
+                    if (Orders != null)
+                    {
+                        foreach (LevelOrder o in Orders)
+                        {
+                            orderProg.Add(o.DescribeProgress());
+                        }
+                    }
+                    extra = string.Format(Localization.Get("order.status.detail"), string.Join(", ", orderProg));
                     break;
             }
             string moves = _level.Type == LevelType.Timed
