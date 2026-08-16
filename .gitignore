@@ -1,3 +1,6 @@
 *.zip
 bin/
 obj/
+publish_out/
+src/bin/
+src/obj/
