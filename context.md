@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.1.7 Lanzamiento Oficial (19 de Agosto de 2026)  
+**Versión:** v1.1.8 Lanzamiento Oficial (19 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.7-08.19.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.8-08.19.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -77,6 +77,14 @@ src/
 | **Ambiente Binaural** | `PlayBinauralAmbientShimmer` shimmer estéreo suave con objetos por columna (toggleable en Opciones) |
 
 ---
+
+## Novedades e Hitos de la Versión v1.1.8 (19 de Agosto de 2026)
+
+1. **Claridad Total del Saldo en una Única Frase (`Localization.cs` & `MainWindow.cs`)**:
+   - Nueva cadena `shop.balance.all` ("Tienes {0} lingotes de oro y {1} monedas") usada por `BalanceText()`, sustituyendo las dos frases sueltas "Lingotes: X. Monedas: Y." que confundían al usuario.
+   - **Saldo siempre visible y anunciado**: menú principal (anunciado al entrar con "Candy Crush Accesible. Tienes X..."), tienda (`DrawShop`) y pantalla de selección de potenciadores (`DrawBoosters`).
+   - **Estrellas "X de 3"**: nueva cadena `complete.stars.of` ("Estrellas: {0} de 3") usada en `AnnounceLevel` y `DrawLevelMap`, eliminando el "Estrellas: 0" sin contexto.
+   - **Mensajes de compra de paquetes claros**: `shop.pack.purchased` ("¡Comprado! Recibiste {0} lingotes de oro") sustituyendo el ambiguo "+10 Cuesta 100 monedas".
 
 ## Novedades e Hitos de la Versión v1.1.7 (19 de Agosto de 2026)
 
@@ -224,9 +232,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`tests/SmokeTest`)**: **ALL TESTS PASSED (100% OK, 0 Errores)**.
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.7-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.7-08.19.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.8-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.8-08.19.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.7: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.7-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.7-08.19.2026)
+- Release v1.1.8: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.8-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.8-08.19.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds_legacy\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
