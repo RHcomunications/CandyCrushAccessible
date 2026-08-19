@@ -89,11 +89,14 @@ src/
 
 2. **Separación Clara de Monedas y Lingotes en la Tienda (`Localization.cs` & `MainWindow.cs`)**:
    - Se eliminó la cadena ambigua `shop.gold` (`"Lingotes: {0} | Monedas: {1}"`).
-   - Nuevo saldo dividido: `shop.balance.gold` (`"Lingotes: {0}"`) y `shop.balance.coins` (`"Monedas: {0}"`), anunciados en dos frases independientes (`BalanceText()`).
+   - **Frase de saldo única y completa**: `shop.balance.all` ("Tienes {0} lingotes de oro y {1} monedas") usada por `BalanceText()`, sustituyendo las frases sueltas "Lingotes: X. Monedas: Y." que resultaban ambiguas.
+   - **Saldo siempre visible**: se muestra y anuncia en el menú principal, la tienda y la pantalla de selección de potenciadores.
+   - **Estrellas "X de 3"**: `complete.stars.of` ("Estrellas: {0} de 3") en `AnnounceLevel` y `DrawLevelMap`, eliminando el "Estrellas: 0" sin contexto.
+   - **Mensajes de compra de paquetes claros**: `shop.pack.purchased` ("¡Comprado! Recibiste {0} lingotes de oro"), sustituyendo el ambiguo "+10 Cuesta 100 monedas".
    - Encabezados de sección en tienda: `shop.section.boosters` ("Potenciadores. Se pagan con lingotes."), `shop.section.packs` ("Paquetes de lingotes. Se pagan con monedas.") y `shop.section.daily` ("Bono diario. Regalo gratuito.").
    - Precios explícitos por divisa: `shop.price` ("Precio: {0} lingotes") para potenciadores y `shop.price.coins` ("Cuesta {0} monedas") para paquetes.
    - Errores informativos con saldo: `shop.notenough` y `shop.coins.notenough` incluyen la cantidad requerida y el saldo actual.
-   - `DrawShop` muestra saldos en dos líneas separadas (lingotes dorado / monedas crema) con separadores de sección.
+   - `DrawShop` muestra el saldo en una sola línea con separadores de sección.
    - Texto del fall screen aclarado: "Comprar 5 movimientos por {0} lingotes de oro".
 
 ## Novedades e Hitos de la Versión v1.0 (14 de Agosto de 2026)

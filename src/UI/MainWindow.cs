@@ -169,6 +169,7 @@ namespace CandyCrushAccessible.UI
             if (s == GameScreen.MainMenu)
             {
                 SoundEngine.PlayMusic(MusicTrack.Menu);
+                Speech.SpeakInterrupt(Localization.Get("game.title") + ". " + BalanceText() + ".");
                 AnnounceMenu(MainMenuItems[_menuIndex]);
             }
             else if (s == GameScreen.LevelMap || s == GameScreen.Shop || s == GameScreen.Options || s == GameScreen.Tutorial || s == GameScreen.Boosters)
@@ -330,9 +331,8 @@ namespace CandyCrushAccessible.UI
         {
             int n = index + 1;
             LevelDefinition l = Levels.Get(n);
-            string stars = "0";
-            int best;
-            if (_progress.BestStars.TryGetValue(n, out best)) stars = best.ToString();
+            int best = 0;
+            if (_progress.BestStars.TryGetValue(n, out best)) { }
             string epText = "";
             EpisodeDefinition ep = Episodes.GetForLevel(n);
             if (n == ep.StartLevel)
@@ -341,7 +341,7 @@ namespace CandyCrushAccessible.UI
             }
             if (_progress.IsUnlocked(n))
             {
-                Speech.SpeakInterrupt(epText + Localization.Get("menu.level") + " " + n + ". " + l.ObjectiveText + ". " + Localization.Get("complete.stars") + " " + stars);
+                Speech.SpeakInterrupt(epText + Localization.Get("menu.level") + " " + n + ". " + l.ObjectiveText + ". " + string.Format(Localization.Get("complete.stars.of"), best));
             }
             else
             {
@@ -478,7 +478,7 @@ namespace CandyCrushAccessible.UI
 
         private string BalanceText()
         {
-            return string.Format(Localization.Get("shop.balance.gold"), _progress.GoldBars) + ". " + string.Format(Localization.Get("shop.balance.coins"), _progress.Coins) + ".";
+            return string.Format(Localization.Get("shop.balance.all"), _progress.GoldBars, _progress.Coins) + ".";
         }
 
         private void AnnounceShop()
@@ -581,7 +581,7 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(10, 100))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +10 " + string.Format(Localization.Get("shop.price.coins"), 100) + ". " + BalanceText());
+                            Speech.Speak(string.Format(Localization.Get("shop.pack.purchased"), 10) + ". " + BalanceText());
                         }
                         else
                         {
@@ -594,7 +594,7 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(30, 250))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +30 " + string.Format(Localization.Get("shop.price.coins"), 250) + ". " + BalanceText());
+                            Speech.Speak(string.Format(Localization.Get("shop.pack.purchased"), 30) + ". " + BalanceText());
                         }
                         else
                         {
@@ -607,7 +607,7 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(70, 500))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +70 " + string.Format(Localization.Get("shop.price.coins"), 500) + ". " + BalanceText());
+                            Speech.Speak(string.Format(Localization.Get("shop.pack.purchased"), 70) + ". " + BalanceText());
                         }
                         else
                         {
@@ -644,8 +644,7 @@ namespace CandyCrushAccessible.UI
         private void DrawShop(Graphics g)
         {
             g.DrawString(Localization.Get("shop.title"), new Font(Font.FontFamily, 18), Brushes.Gold, 40, 20);
-            g.DrawString(string.Format(Localization.Get("shop.balance.gold"), _progress.GoldBars), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.Gold, 40, 48);
-            g.DrawString(string.Format(Localization.Get("shop.balance.coins"), _progress.Coins), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.LightGoldenrodYellow, 40, 66);
+            g.DrawString(BalanceText(), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.Gold, 40, 48);
             int y = 92;
             g.DrawString(Localization.Get("shop.section.boosters"), new Font(Font.FontFamily, 10, FontStyle.Italic), Brushes.Orange, 40, y);
             y += 24;
@@ -1920,6 +1919,7 @@ del ""%~f0""
                 y += 50;
             }
             g.DrawString(string.Format(Localization.Get("lives.count"), _progress.Lives), Font, Brushes.LightGray, 100, y + 10);
+            g.DrawString(BalanceText(), new Font(Font.FontFamily, 13), Brushes.Gold, 100, y + 32);
         }
 
         private void DrawLevelMap(Graphics g)
@@ -1933,10 +1933,9 @@ del ""%~f0""
                 int n = i + 1;
                 LevelDefinition l = Levels.Get(n);
                 bool unlocked = _progress.IsUnlocked(n);
-                string stars = "0";
-                int best;
-                if (_progress.BestStars.TryGetValue(n, out best)) stars = best.ToString();
-                string text = (i == _mapIndex ? "> " : "  ") + Localization.Get("menu.level") + " " + n + "  " + l.ObjectiveText + "  " + Localization.Get("complete.stars") + " " + stars;
+                int best = 0;
+                if (_progress.BestStars.TryGetValue(n, out best)) { }
+                string text = (i == _mapIndex ? "> " : "  ") + Localization.Get("menu.level") + " " + n + "  " + l.ObjectiveText + "  " + string.Format(Localization.Get("complete.stars.of"), best);
                 Brush b = !unlocked ? Brushes.Gray : (i == _mapIndex ? Brushes.Gold : Brushes.White);
                 Font f = i == _mapIndex ? new Font(Font.FontFamily, 13, FontStyle.Bold) : new Font(Font.FontFamily, 13);
                 g.DrawString(text, f, b, 40, y);
@@ -1948,8 +1947,9 @@ del ""%~f0""
         {
             List<BoosterType> available = GetAvailableBoosters();
             g.DrawString(Localization.Get("booster.shop"), new Font(Font.FontFamily, 18), Brushes.Gold, 40, 25);
-            g.DrawString(string.Format(Localization.Get("booster.selected"), _boosterSelection.Count), Font, Brushes.LightGray, 40, 55);
-            int y = 90;
+            g.DrawString(BalanceText(), new Font(Font.FontFamily, 12), Brushes.Gold, 40, 52);
+            g.DrawString(string.Format(Localization.Get("booster.selected"), _boosterSelection.Count), Font, Brushes.LightGray, 40, 70);
+            int y = 100;
             for (int i = 0; i < available.Count; i++)
             {
                 BoosterType t = available[i];
