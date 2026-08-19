@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.1.6</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.1.7</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,12 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.1.7 (19 de Agosto de 2026)</strong> — <strong>Audio Binaural 3D Orientado a Objetos y Tienda Bilingüe sin Ambigüedades</strong>:
+            <ul>
+                <li><strong>Principio Dolby/Atmos en el Paisaje Sonoro</strong>: Cada sonido se modela como un objeto 3D con posición (lateral, profundidad) frente a un oyente fijo; el motor calcula paneo por acimut igual-potencia, atenuación por distancia (roll-off tipo Dolby) y tono por profundidad, conservando la firma por color de cada caramelo.</li>
+                <li><strong>Separación Clara de Monedas y Lingotes en la Tienda</strong>: Saldos anunciados en frases independientes, encabezados de sección por divisa (potenciadores con lingotes / paquetes con monedas / bono diario) y precios explícitos para cada moneda.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.6 (16 de Agosto de 2026)</strong> — <strong>Hotfix del Actualizador OTA (Extracción Blindada)</strong>:
             <ul>
                 <li>Corrección del script de actualización para utilizar <code>tar.exe -xf</code> nativo de Windows con fallback a <code>Expand-Archive -LiteralPath -Force</code>, eliminando por completo el fallo de incompatibilidad de tipos (<code>System.Text.Encoding</code> vs <code>Boolean</code>) en PowerShell 5.1.</li>
@@ -405,6 +411,12 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.1.7 (August 19, 2026)</strong> — <strong>Object-Oriented 3D Binaural Audio and Ambiguity-Free Shop</strong>:
+            <ul>
+                <li><strong>Dolby/Atmos-style Soundscape</strong>: Every sound is modeled as a 3D object (lateral position, depth) in front of a fixed listener; the engine computes equal-power azimuth panning, distance attenuation (Dolby-style roll-off) and depth-based pitch while preserving each candy color's signature tone.</li>
+                <li><strong>Clear Coins vs Gold Bars Separation in the Shop</strong>: Balances announced in separate sentences, per-currency section headers (boosters with gold bars / packs with coins / daily bonus) and explicit prices for each currency.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.6 (August 16, 2026)</strong> — <strong>OTA Updater Extraction Hotfix</strong>:
             <ul>
                 <li>Fixed updater extraction command in <code>apply_update.cmd</code> by leveraging native Windows <code>tar.exe -xf</code> with automated fallback to <code>Expand-Archive -LiteralPath -Force</code>, resolving PowerShell 5.1 / .NET Framework type cast incompatibility.</li>

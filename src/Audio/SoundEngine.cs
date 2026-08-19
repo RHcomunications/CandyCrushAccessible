@@ -17,6 +17,20 @@ namespace CandyCrushAccessible.Audio
 
         private const int BaseFreq = 44100;
 
+        // ---- Spatial Audio Object Model (Dolby-style) ----
+        // Cada sonido se trata como un OBJETO situado en un espacio 3D
+        // (columna -> eje X lateral, fila -> eje Y de profundidad, Z = 0 en el plano del tablero).
+        // Un "oyente" fijo se sitúa frente al centro del tablero y el motor calcula
+        // paneo por acimut, atenuación por distancia y altura tonal por profundidad.
+        private const float BoardHalfWidth = 3.5f;      // centro tablero: (3.5, 3.5)
+        private const float DepthCompression = 0.5f;     // compresión del eje de profundidad
+        private const float ListenerDistance = 7.0f;     // distancia del oyente al centro del tablero
+        private const float DistanceRolloff = 0.22f;     // fuerza de atenuación por distancia
+        private const float PanStrength = 0.95f;         // intensidad del paneo (0.5 = sutil, 1 = extremo)
+        private const float MinVolume = 0.08f;           // volumen mínimo para objetos lejanos
+        private const float DepthPitchFactor = 0.003f;   // brillo tonal por proximidad
+        private const float MinDistanceForAttenuation = 4.5f;
+
         private static bool _initialized;
         private static int _musicHandle;
         private static float _musicVolume = 0.45f;
@@ -174,26 +188,28 @@ namespace CandyCrushAccessible.Audio
             int h = BASS_StreamCreateFile(false, path, 0, 0, BASS_UNICODE);
             if (h == 0) return;
 
-            if (col >= 0)
+            double finalPitch = pitch;
+            float vol = _sfxVolume * (float)volumeScale;
+
+            if (col >= 0 && row >= 0)
             {
-                float pan = (col - 3.5f) / 3.5f;
+                ApplyObjectSpatialization(h, col, row, ref finalPitch, ref vol);
+            }
+            else if (col >= 0)
+            {
+                float pan = (col - BoardHalfWidth) / BoardHalfWidth;
+                pan = Math.Max(-1f, Math.Min(1f, pan));
                 BASS_ChannelSetAttribute(h, BASS_ATTRIB_PAN, pan);
             }
-            double finalPitch = pitch;
-            if (row >= 0)
-            {
-                finalPitch *= (1.05 - 0.015 * row);
-            }
+
+            if (finalPitch < 0.5) finalPitch = 0.5;
+            if (finalPitch > 2.0) finalPitch = 2.0;
             if (finalPitch != 1.0)
             {
                 BASS_ChannelSetAttribute(h, BASS_ATTRIB_FREQ, (int)(BaseFreq * finalPitch));
             }
-            float vol = _sfxVolume * (float)volumeScale;
-            if (row >= 0)
-            {
-                vol *= (0.80f + 0.35f * (row / 7.0f));
-            }
             if (vol > 1.0f) vol = 1.0f;
+            if (vol < 0.0f) vol = 0.0f;
             BASS_ChannelSetAttribute(h, BASS_ATTRIB_VOL, vol);
             BASS_ChannelPlay(h, false);
 
@@ -219,6 +235,49 @@ namespace CandyCrushAccessible.Audio
                 SyncDelegates.Add(proc);
             }
             BASS_ChannelSetSync(h, BASS_SYNC_END, 0, proc, IntPtr.Zero);
+        }
+
+        /// <summary>
+        /// Aplica el modelo de audio por objetos (principio Dolby): calcula paneo por acimut,
+        /// atenuación por distancia y ajuste de tono por profundidad según la posición 3D
+        /// del objeto respecto a un oyente fijo frente al centro del tablero.
+        /// </summary>
+        private static void ApplyObjectSpatialization(int h, int col, int row, ref double pitch, ref float vol)
+        {
+            // Posición del objeto en el espacio del mundo (centrado en el tablero)
+            float wx = (col - BoardHalfWidth) * 1.0f;          // lateral: -3.5 (izq) .. +3.5 (der)
+            float wy = (BoardHalfWidth - row) * DepthCompression; // profundidad: +1.75 (fila 0, lejos) .. -1.75 (fila 7, cerca)
+            float wz = 0f;
+
+            // Oyente fijo frente al centro del tablero
+            float lx = 0f;
+            float ly = -ListenerDistance;
+            float lz = 0f;
+
+            float dx = wx - lx;
+            float dy = wy - ly;
+            float dz = wz - lz;
+            float dist = (float)Math.Sqrt(dx * dx + dy * dy + dz * dz);
+            if (dist < 0.01f) dist = 0.01f;
+
+            // 1) Paneo por acimut (equal-power, más natural que lineal)
+            float azimuth = (float)Math.Atan2(dx, dy);
+            float pan = (float)Math.Sin(azimuth) * PanStrength;
+            pan = Math.Max(-1f, Math.Min(1f, pan));
+            BASS_ChannelSetAttribute(h, BASS_ATTRIB_PAN, pan);
+
+            // 2) Atenuación por distancia (roll-off tipo Dolby: 1/(1 + k*d))
+            float att = 1f;
+            if (dist > MinDistanceForAttenuation)
+            {
+                att = 1f / (1f + DistanceRolloff * (dist - MinDistanceForAttenuation));
+                att = Math.Max(MinVolume, Math.Min(1f, att));
+            }
+            vol *= att;
+
+            // 3) Tono por profundidad: objetos cercanos más brillantes, lejanos más oscuros
+            double depthPitch = 1.0 + (ListenerDistance - dist) * DepthPitchFactor;
+            pitch *= depthPitch;
         }
 
         public static void PlayVoice(string key)
@@ -441,7 +500,6 @@ namespace CandyCrushAccessible.Audio
             {
                 int col = i;
                 int row = 3 + Rng.Next(2);
-                float pan = (col - 3.5f) / 3.5f;
                 float pitch = 1.3f + (col * 0.02f);
                 System.Threading.Timer t = null;
                 int step = 0;

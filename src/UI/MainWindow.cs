@@ -476,9 +476,14 @@ namespace CandyCrushAccessible.UI
             StartLevel(_mapIndex + 1, selected);
         }
 
+        private string BalanceText()
+        {
+            return string.Format(Localization.Get("shop.balance.gold"), _progress.GoldBars) + ". " + string.Format(Localization.Get("shop.balance.coins"), _progress.Coins) + ".";
+        }
+
         private void AnnounceShop()
         {
-            string balances = string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins);
+            string balances = BalanceText();
             if (_shopIndex < 5)
             {
                 string itemKey = ShopItems[_shopIndex];
@@ -487,19 +492,26 @@ namespace CandyCrushAccessible.UI
                 int price = GameProgress.GetBoosterPrice(type);
                 int count = _progress.GetBooster(type);
                 string status = unlocked ? (count > 0 ? string.Format(Localization.Get("shop.owned.count"), count) + ". " + string.Format(Localization.Get("shop.price"), price) : string.Format(Localization.Get("shop.price"), price)) : Localization.Get("shop.locked");
-                Speech.SpeakInterrupt(Localization.Get(itemKey) + ". " + status + ". " + balances);
+                Speech.SpeakInterrupt(string.Format(Localization.Get("shop.section.boosters")) + ". " + Localization.Get(itemKey) + ". " + status + ". " + balances);
             }
             else if (_shopIndex >= 5 && _shopIndex <= 7)
             {
                 string itemKey = ShopItems[_shopIndex];
-                Speech.SpeakInterrupt(Localization.Get(itemKey) + ". " + balances);
+                int packCoins = 0;
+                switch (_shopIndex)
+                {
+                    case 5: packCoins = 100; break;
+                    case 6: packCoins = 250; break;
+                    case 7: packCoins = 500; break;
+                }
+                Speech.SpeakInterrupt(string.Format(Localization.Get("shop.section.packs")) + ". " + Localization.Get(itemKey) + ". " + string.Format(Localization.Get("shop.price.coins"), packCoins) + ". " + balances);
             }
             else
             {
                 double remaining = _progress.DailyBonusTimeRemaining();
                 if (remaining <= 0)
                 {
-                    Speech.SpeakInterrupt(Localization.Get("shop.daily") + ". " + Localization.Get("shop.collect") + ". " + balances);
+                    Speech.SpeakInterrupt(string.Format(Localization.Get("shop.section.daily")) + ". " + Localization.Get("shop.daily") + ". " + Localization.Get("shop.collect") + ". " + balances);
                 }
                 else
                 {
@@ -556,7 +568,7 @@ namespace CandyCrushAccessible.UI
                             _progress.AddBooster(type, 1);
                             _progress.Save();
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get(ShopItems[_shopIndex]) + ". " + Localization.Get("shop.purchased") + ". " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(Localization.Get(ShopItems[_shopIndex]) + ". " + Localization.Get("shop.purchased") + ". " + BalanceText());
                         }
                         else
                         {
@@ -569,12 +581,12 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(10, 100))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +10 " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(Localization.Get("shop.purchased") + ". +10 " + string.Format(Localization.Get("shop.price.coins"), 100) + ". " + BalanceText());
                         }
                         else
                         {
                             SoundEngine.PlaySound("shop_error");
-                            Speech.Speak(Localization.Get("shop.coins.notenough"));
+                            Speech.Speak(string.Format(Localization.Get("shop.coins.notenough"), 100) + ". " + BalanceText());
                         }
                     }
                     else if (_shopIndex == 6)
@@ -582,12 +594,12 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(30, 250))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +30 " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(Localization.Get("shop.purchased") + ". +30 " + string.Format(Localization.Get("shop.price.coins"), 250) + ". " + BalanceText());
                         }
                         else
                         {
                             SoundEngine.PlaySound("shop_error");
-                            Speech.Speak(Localization.Get("shop.coins.notenough"));
+                            Speech.Speak(string.Format(Localization.Get("shop.coins.notenough"), 250) + ". " + BalanceText());
                         }
                     }
                     else if (_shopIndex == 7)
@@ -595,12 +607,12 @@ namespace CandyCrushAccessible.UI
                         if (_progress.BuyGoldPackage(70, 500))
                         {
                             SoundEngine.PlaySound("shop_buy");
-                            Speech.Speak(Localization.Get("shop.purchased") + ". +70 " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(Localization.Get("shop.purchased") + ". +70 " + string.Format(Localization.Get("shop.price.coins"), 500) + ". " + BalanceText());
                         }
                         else
                         {
                             SoundEngine.PlaySound("shop_error");
-                            Speech.Speak(Localization.Get("shop.coins.notenough"));
+                            Speech.Speak(string.Format(Localization.Get("shop.coins.notenough"), 500) + ". " + BalanceText());
                         }
                     }
                     else
@@ -608,7 +620,7 @@ namespace CandyCrushAccessible.UI
                         if (_progress.TryCollectDailyBonus())
                         {
                             SoundEngine.PlaySound("daily_bonus");
-                            Speech.Speak(Localization.Get("shop.daily.collected") + ". " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(Localization.Get("shop.daily.collected") + ". " + BalanceText());
                         }
                         else
                         {
@@ -632,10 +644,25 @@ namespace CandyCrushAccessible.UI
         private void DrawShop(Graphics g)
         {
             g.DrawString(Localization.Get("shop.title"), new Font(Font.FontFamily, 18), Brushes.Gold, 40, 20);
-            g.DrawString(string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.Gold, 40, 48);
-            int y = 78;
+            g.DrawString(string.Format(Localization.Get("shop.balance.gold"), _progress.GoldBars), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.Gold, 40, 48);
+            g.DrawString(string.Format(Localization.Get("shop.balance.coins"), _progress.Coins), new Font(Font.FontFamily, 13, FontStyle.Bold), Brushes.LightGoldenrodYellow, 40, 66);
+            int y = 92;
+            g.DrawString(Localization.Get("shop.section.boosters"), new Font(Font.FontFamily, 10, FontStyle.Italic), Brushes.Orange, 40, y);
+            y += 24;
             for (int i = 0; i < ShopItems.Length; i++)
             {
+                if (i == 5)
+                {
+                    y += 10;
+                    g.DrawString(Localization.Get("shop.section.packs"), new Font(Font.FontFamily, 10, FontStyle.Italic), Brushes.Orange, 40, y);
+                    y += 24;
+                }
+                else if (i == 8)
+                {
+                    y += 10;
+                    g.DrawString(Localization.Get("shop.section.daily"), new Font(Font.FontFamily, 10, FontStyle.Italic), Brushes.Orange, 40, y);
+                    y += 24;
+                }
                 string text = (i == _shopIndex ? "> " : "  ") + Localization.Get(ShopItems[i]);
                 if (i < 5)
                 {
@@ -652,6 +679,17 @@ namespace CandyCrushAccessible.UI
                     {
                         text += "  " + Localization.Get("shop.locked") + " (" + string.Format(Localization.Get("shop.unlock.at"), GameProgress.GetBoosterUnlockLevel(type)) + ")";
                     }
+                }
+                else if (i >= 5 && i <= 7)
+                {
+                    int packCoins = 0;
+                    switch (i)
+                    {
+                        case 5: packCoins = 100; break;
+                        case 6: packCoins = 250; break;
+                        case 7: packCoins = 500; break;
+                    }
+                    text += "  " + string.Format(Localization.Get("shop.price.coins"), packCoins);
                 }
                 else if (i == 8)
                 {
@@ -1183,7 +1221,7 @@ namespace CandyCrushAccessible.UI
             Speech.SpeakInterrupt(Localization.Get("msg.win") + ". " +
                 string.Format(Localization.Get("complete.score"), _board.Score) + ". " +
                 string.Format(Localization.Get("complete.stars"), Localization.StarLabel(stars)) + ". " +
-                string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                BalanceText());
 
             EpisodeDefinition ep = Episodes.GetForLevel(_levelNumber);
             if (Episodes.IsEndLevel(_levelNumber))
@@ -1668,7 +1706,7 @@ namespace CandyCrushAccessible.UI
                         else
                         {
                             SoundEngine.PlaySound("invalid");
-                            Speech.Speak(string.Format(Localization.Get("shop.notenough"), price) + ". " + string.Format(Localization.Get("shop.gold"), _progress.GoldBars, _progress.Coins));
+                            Speech.Speak(string.Format(Localization.Get("shop.notenough"), price) + ". " + BalanceText());
                         }
                     }
                     else

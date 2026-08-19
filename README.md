@@ -34,6 +34,7 @@
   - `P` / `Esc`: Pause menu.
 
 ### Version History (Changelog)
+- **v1.1.7 (August 19, 2026)**: Object-oriented 3D binaural audio (Dolby/Atmos principle): each sound is modeled as a 3D object in front of a fixed listener with equal-power azimuth panning, Dolby-style distance roll-off and depth-based pitch, preserving per-candy signature tones. Clear coins vs gold bars separation in the shop: separate balance announcements, per-currency section headers and explicit prices for each currency.
 - **v1.1.6 (August 16, 2026)**: Fixed OTA extraction command in `apply_update.cmd` using native Windows `tar.exe -xf` with automated fallback to `Expand-Archive -LiteralPath -Force` to prevent PowerShell 5.1 type cast failures.
 - **v1.1.5 (August 16, 2026)**: 100% authentic 2012 historical sound preservation (direct integration of all 153 assets in `sounds_legacy/`), contextual OST track mapping by mode (Menu, Win, Fail, Score/Jelly, Orders, Timed, Ingredients), and automated smoke test certification.
 - **v1.1.4 (August 16, 2026)**: Calibrated 2012 scoring table for combos (Color Bomb + Color Bomb +5000, Bomb + Special +4000, Wrapped + Wrapped +3500, Striped + Wrapped +3000, Striped + Striped +2000) and obstacles (Jelly +1000, Frosting/Licorice/Chocolate +200), plus hardened OTA updater with `ZipFile.ExtractToDirectory` and immediate clean process shutdown.
@@ -78,6 +79,7 @@
   - `P` / `Esc`: Menú de pausa.
 
 ### Historial de Versiones
+- **v1.1.7 (19 de Agosto de 2026)**: Audio binaural 3D orientado a objetos (principio Dolby/Atmos): cada sonido se modela como un objeto 3D frente a un oyente fijo con paneo por acimut igual-potencia, atenuación por distancia tipo Dolby y tono por profundidad, conservando la firma tonal de cada caramelo. Separación clara de monedas y lingotes en la tienda: saldos en frases independientes, encabezados de sección por divisa y precios explícitos para cada moneda.
 - **v1.1.6 (16 de Agosto de 2026)**: Corrección crítica de extracción en `apply_update.cmd` mediante `tar.exe -xf` nativo con fallback a `Expand-Archive -LiteralPath -Force` para solventar fallos de tipos en PowerShell 5.1.
 - **v1.1.5 (16 de Agosto de 2026)**: Preservación histórica 2012 pura (integración directa de los 153 assets en `sounds_legacy/`), mapeo dinámico de banda sonora por modo (Menú, Victoria, Derrota, Puntuación/Gelatina, Pedidos, Tiempo, Ingredientes) y certificación con suite de pruebas de humo automatizada.
 - **v1.1.4 (16 de Agosto de 2026)**: Calibración oficial de la tabla de puntuaciones 2012 para combinaciones especiales (Bomba+Bomba +5000, Bomba+Especial +4000, Envuelto+Envuelto +3500, Rayado+Envuelto +3000, Rayado+Rayado +2000) y obstáculos (Gelatina +1000, Glaseado/Regaliz/Chocolate +200), y blindaje del actualizador OTA con `ZipFile.ExtractToDirectory` y cierre de proceso inmediato.
