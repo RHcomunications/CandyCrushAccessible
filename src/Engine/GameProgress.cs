@@ -62,7 +62,6 @@ namespace CandyCrushAccessible.Engine
             {
             }
             p.GrantStarterBoosters();
-            p.TryCollectDailyBonus();
             if (IsDevMode)
             {
                 p.Lives = 99;

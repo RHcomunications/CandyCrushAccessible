@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.1.8</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.1.9</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,13 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.1.9 (19 de Agosto de 2026)</strong> — <strong>Panel de Desarrollo Exclusivo DEBUG y Bono Diario Verificable</strong>:
+            <ul>
+                <li><strong>Maxear Todo (solo desarrollo)</strong>: Nueva opción al final del menú de Opciones, visible únicamente en compilaciones DEBUG. Concede 9999 lingotes, 99999 monedas, 99 vidas, 50 de cada potenciador, todos los niveles desbloqueados y el bono diario disponible de nuevo.</li>
+                <li><strong>Cero fugas a producción</strong>: El método de maxización está bloqueado con <code>#if DEBUG</code> y NO existe en la DLL de Release (verificado a nivel binario).</li>
+                <li><strong>Bono diario reclamable manualmente</strong>: Corregido el auto-reclamo silencioso al arrancar; ahora el bono se reclama exclusivamente en la tienda con Enter.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.8 (19 de Agosto de 2026)</strong> — <strong>Claridad Total del Saldo y Estrellas "X de 3"</strong>:
             <ul>
                 <li><strong>Saldo en una Única Frase</strong>: "Tienes X lingotes de oro y Y monedas" en lugar de dos frases sueltas y ambiguas.</li>
@@ -422,6 +429,13 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.1.9 (August 19, 2026)</strong> — <strong>DEBUG-Only Dev Panel and Verifiable Daily Bonus</strong>:
+            <ul>
+                <li><strong>Max Everything (dev only)</strong>: New option at the end of the Options menu, visible only in DEBUG builds. Grants 9999 gold bars, 99999 coins, 99 lives, 50 of each booster, all levels unlocked and the daily bonus available again.</li>
+                <li><strong>Zero production leaks</strong>: The max-out method is guarded with <code>#if DEBUG</code> and does NOT exist in the Release DLL (verified at binary level).</li>
+                <li><strong>Manually claimable daily bonus</strong>: Fixed the silent auto-claim on startup; the bonus is now claimed exclusively in the shop with Enter.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.8 (August 19, 2026)</strong> — <strong>Total Balance Clarity and "X of 3" Stars</strong>:
             <ul>
                 <li><strong>Single-Sentence Balance</strong>: "You have X gold bars and Y coins" instead of two ambiguous separate phrases.</li>

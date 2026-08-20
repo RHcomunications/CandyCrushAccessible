@@ -57,10 +57,19 @@ namespace CandyCrushAccessible.UI
             "mainmenu.play", "mainmenu.shop", "mainmenu.tutorial", "mainmenu.options", "mainmenu.quit"
         };
 
-        private readonly string[] OptionsItems =
+        private readonly string[] OptionsItems;
+
+        private static string[] BuildOptionsItems()
         {
-            "options.language", "options.music", "options.sfx", "options.voice", "options.binaural", "options.update"
-        };
+            var items = new List<string>
+            {
+                "options.language", "options.music", "options.sfx", "options.voice", "options.binaural", "options.update"
+            };
+#if DEBUG
+            items.Add("options.debug");
+#endif
+            return items.ToArray();
+        }
 
         private readonly string[] PauseItems =
         {
@@ -88,6 +97,8 @@ namespace CandyCrushAccessible.UI
             DoubleBuffered = true;
             KeyPreview = true;
             BackColor = Color.FromArgb(40, 36, 60);
+
+            OptionsItems = BuildOptionsItems();
 
             _timer = new System.Windows.Forms.Timer { Interval = 250 };
             _timer.Tick += TimerTick;
@@ -1452,6 +1463,12 @@ namespace CandyCrushAccessible.UI
                     {
                         CheckForUpdatesManual();
                     }
+#if DEBUG
+                    else if (_optionsIndex == 6)
+                    {
+                        MaxEverythingDev();
+                    }
+#endif
                     break;
                 case Keys.Escape:
                 case Keys.Back:
@@ -1498,6 +1515,25 @@ namespace CandyCrushAccessible.UI
             Speech.Speak(string.Format(Localization.Get("options.binaural.value"), state));
             Invalidate();
         }
+
+        #if DEBUG
+        private void MaxEverythingDev()
+        {
+            _progress.Lives = 99;
+            _progress.GoldBars = 9999;
+            _progress.Coins = 99999;
+            _progress.DailyBonusDue = DateTime.MinValue;
+            foreach (BoosterType type in Enum.GetValues(typeof(BoosterType)))
+            {
+                _progress.BoosterCounts[type] = 50;
+            }
+            if (_progress.CurrentLevel < Levels.TotalLevels) _progress.CurrentLevel = Levels.TotalLevels;
+            _progress.Save();
+            SoundEngine.PlaySound("daily_bonus");
+            Speech.Speak(string.Format(Localization.Get("options.debug.maxed"), _progress.GoldBars, _progress.Coins));
+            Invalidate();
+        }
+#endif
 
         private void AdjustOption(int delta)
         {
@@ -1557,6 +1593,11 @@ namespace CandyCrushAccessible.UI
                 case 5:
                     Speech.SpeakInterrupt(Localization.Get("options.update"));
                     break;
+#if DEBUG
+                case 6:
+                    Speech.SpeakInterrupt(Localization.Get("options.debug"));
+                    break;
+#endif
             }
         }
 
@@ -2125,10 +2166,14 @@ del ""%~f0""
                 string.Format(Localization.Get("options.binaural.value"), binState),
                 Localization.Get("options.update")
             };
+            var optionLines = new List<string>(values);
+#if DEBUG
+            optionLines.Add(Localization.Get("options.debug"));
+#endif
             int y = 90;
-            for (int i = 0; i < OptionsItems.Length; i++)
+            for (int i = 0; i < optionLines.Count; i++)
             {
-                string text = (i == _optionsIndex ? "> " : "  ") + values[i];
+                string text = (i == _optionsIndex ? "> " : "  ") + optionLines[i];
                 Brush b = i == _optionsIndex ? Brushes.Gold : Brushes.White;
                 Font f = i == _optionsIndex ? new Font(Font.FontFamily, 14, FontStyle.Bold) : new Font(Font.FontFamily, 14);
                 g.DrawString(text, f, b, 40, y);
