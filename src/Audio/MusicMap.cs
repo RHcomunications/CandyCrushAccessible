@@ -38,10 +38,11 @@ namespace CandyCrushAccessible.Audio
             switch (type)
             {
                 case LevelType.Score:
+                    return "candy_crush_soundtrack2";
                 case LevelType.Jelly:
                     return "candy_crush_loop5";
                 case LevelType.Order:
-                    return "candy_crush_soundtrack2";
+                    return "candy_crush_soundtrack3";
                 case LevelType.Timed:
                     return "candy_crush_soundtrack3";
                 case LevelType.Ingredient:
