@@ -14,6 +14,16 @@ namespace CandyCrushAccessible.Audio
         private const int BASS_ATTRIB_FREQ = 1;
         private const int BASS_ATTRIB_PAN = 3;
         private const int BASS_SYNC_END = 2;
+        private const int BASS_FX_DX8_REVERB = 9;
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct BASS_DX8_REVERB
+        {
+            public float fInGain;
+            public float fReverbMix;
+            public float fReverbTime;
+            public float fHighFreqRTRatio;
+        }
 
         private const int BaseFreq = 44100;
 
@@ -72,6 +82,15 @@ namespace CandyCrushAccessible.Audio
 
         [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int BASS_ChannelSetSync(int handle, int type, long param, SyncProc proc, IntPtr user);
+
+        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern int BASS_ChannelSetFX(int handle, int type, int priority);
+
+        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool BASS_FXSetParameters(int handle, ref BASS_DX8_REVERB par);
+
+        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
+        private static extern bool BASS_ChannelSlideAttribute(int handle, int attrib, float value, uint time);
 
         public static void Init()
         {
@@ -158,10 +177,16 @@ namespace CandyCrushAccessible.Audio
             }
         }
 
-        public static void DuckMusic(float duckLevel, int durationMs)
+        /// <summary>
+        /// Fórmula Bejeweled: Ducking musical suave y transparente mediante BASS_ChannelSlideAttribute.
+        /// Desliza el volumen de la música al 35% en 200ms y lo restaura suavemente al 100% en 1000ms tras 1.5s.
+        /// </summary>
+        public static void DuckMusic(float duckLevel = 0.35f, int durationMs = 1500)
         {
             if (_musicHandle == 0) return;
-            BASS_ChannelSetAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume * duckLevel);
+            float targetDuckVol = _musicVolume * duckLevel;
+            BASS_ChannelSlideAttribute(_musicHandle, BASS_ATTRIB_VOL, targetDuckVol, 200);
+
             if (_duckTimer != null)
             {
                 _duckTimer.Change(durationMs, Timeout.Infinite);
@@ -172,10 +197,34 @@ namespace CandyCrushAccessible.Audio
                 {
                     if (_musicHandle != 0)
                     {
-                        BASS_ChannelSetAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume);
+                        BASS_ChannelSlideAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume, 1000);
                     }
                 }, null, durationMs, Timeout.Infinite);
             }
+        }
+
+        /// <summary>
+        /// Fórmula Bejeweled (Audrik x Narayan): Reverb de cuarto sutil (-12dB) con BASS_FX_DX8_REVERB.
+        /// Añade una cola acústica ligera (450ms) que sitúa el tablero espacialmente frente al oyente sin alterar el sonido original ni saturar.
+        /// </summary>
+        public static void ApplyRoomReverb(int channel)
+        {
+            try
+            {
+                int fx = BASS_ChannelSetFX(channel, BASS_FX_DX8_REVERB, 0);
+                if (fx != 0)
+                {
+                    BASS_DX8_REVERB rev = new BASS_DX8_REVERB
+                    {
+                        fInGain = 0f,
+                        fReverbMix = -12.0f,
+                        fReverbTime = 450.0f,
+                        fHighFreqRTRatio = 0.001f
+                    };
+                    BASS_FXSetParameters(fx, ref rev);
+                }
+            }
+            catch { }
         }
 
         public static void PlaySound(string key, int col = -1, int row = -1, double pitch = 1.0, double volumeScale = 1.0)
@@ -194,12 +243,14 @@ namespace CandyCrushAccessible.Audio
             if (col >= 0 && row >= 0)
             {
                 ApplyObjectSpatialization(h, col, row, ref finalPitch, ref vol);
+                ApplyRoomReverb(h);
             }
             else if (col >= 0)
             {
                 float pan = (col - BoardHalfWidth) / BoardHalfWidth;
                 pan = Math.Max(-1f, Math.Min(1f, pan));
                 BASS_ChannelSetAttribute(h, BASS_ATTRIB_PAN, pan);
+                ApplyRoomReverb(h);
             }
 
             if (finalPitch < 0.5) finalPitch = 0.5;
@@ -287,8 +338,12 @@ namespace CandyCrushAccessible.Audio
             string path = ContentResolver.SoundPath(file);
             if (path == null) return;
 
+            // Ducking de la música para que la locución destaque con total claridad
+            DuckMusic(0.35f, 1500);
+
             int h = BASS_StreamCreateFile(false, path, 0, 0, BASS_UNICODE);
             if (h == 0) return;
+            // Las voces permanecen 100% secas y limpias (sin reverb ni filtros)
             BASS_ChannelSetAttribute(h, BASS_ATTRIB_VOL, _voiceVolume);
             BASS_ChannelPlay(h, false);
 

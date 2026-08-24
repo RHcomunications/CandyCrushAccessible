@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.2.0</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.2.1</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,13 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.2.1 (24 de Agosto de 2026)</strong> — <strong>Fórmula Audrik x Narayan: Reverb 3D y Ducking Dinámico</strong>:
+            <ul>
+                <li><strong>Reverb de Cuarto Sutil (<code>BASS_FX_DX8_REVERB</code>)</strong>: Implementación de una sala acústica ligera (-12 dB, 450 ms) que sitúa el tablero espacialmente frente al oyente sin alterar el sonido original ni saturar el techo digital.</li>
+                <li><strong>Ducking Musical Limpio (<code>BASS_ChannelSlideAttribute</code>)</strong>: Deslizamiento suave de la música al 35% en 200 ms durante las locuciones del narrador (<em>Sweet!</em>, <em>Tasty!</em>, <em>Divine!</em>, <em>Delicious!</em>) y restauración transparente en 1000 ms a los 1.5s.</li>
+                <li><strong>Fidelidad Absoluta</strong>: Cero filtros paramétricos aditivos; el audio conserva 100% su dinámica y pureza original de 2012.</li>
+            </ul>
+        </li>
         <li><strong>v1.2.0 (24 de Agosto de 2026)</strong> — <strong>Corrección Integral de Fidelidad Sonora y Mapeo de Audio</strong>:
             <ul>
                 <li><strong>Pista de Derrota Auténtica</strong>: Corregida la pista de derrota en <code>MusicMap.cs</code> (se eliminó la fanfarria alegre de intro <em>candy_crush_intro2</em> que sonaba al perder, silenciando la música y reproduciendo únicamente el SFX auténtico <em>level_failed1.wav</em>).</li>
@@ -436,6 +443,13 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.2.1 (August 24, 2026)</strong> — <strong>Audrik x Narayan Formula: 3D Room Reverb &amp; Dynamic Ducking</strong>:
+            <ul>
+                <li><strong>Subtle Room Reverb (<code>BASS_FX_DX8_REVERB</code>)</strong>: Subtle room acoustic presence (-12 dB, 450 ms) that places the board physically in front of the listener without touching the original assets or digital headroom.</li>
+                <li><strong>Clean Dynamic Ducking (<code>BASS_ChannelSlideAttribute</code>)</strong>: Smooth 200 ms music fade-down to 35% during announcer voice events (<em>Sweet!</em>, <em>Tasty!</em>, <em>Divine!</em>, <em>Delicious!</em>) with transparent 1000 ms restoration after 1.5s.</li>
+                <li><strong>Zero Additive EQ / Pure Dynamics</strong>: Zero digital distortion or clipping, ensuring 100% pure audio fidelity matching the Bejeweled 3 architecture.</li>
+            </ul>
+        </li>
         <li><strong>v1.2.0 (August 24, 2026)</strong> — <strong>Complete Audio Fidelity &amp; Sound Mapping Overhaul</strong>:
             <ul>
                 <li><strong>Authentic Defeat Audio</strong>: Corrected lose track in <code>MusicMap.cs</code> by removing the upbeat <em>candy_crush_intro2</em> level start fanfare upon losing; the engine now immediately stops music and plays only the authentic defeat SFX <em>level_failed1.wav</em>.</li>

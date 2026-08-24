@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.2.0 Lanzamiento Oficial (24 de Agosto de 2026)  
+**Versión:** v1.2.1 Lanzamiento Oficial (24 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.2.0-08.24.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.2.1-08.24.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -212,9 +212,10 @@ src/
       - `colorbomb_created` y `wrapped_created` respaldan en sus SFX auténticos (`colour_bomb_created.wav` y `wrapped_candy_created1.wav`).
       - `bomb`, `wrapped_explosion`, `lineblast` y `sugar` respaldan en sonidos de explosión contundentes (`bomb_sound1.wav`, `line_blast1.wav`, `sugar_crush.wav`).
 
-15. **Limpieza Extrema de DSP y Retorno Definitivo a Audio Canónico Puro (v1.2.0)**:
-    - **Diagnóstico de Producción**: La aplicación de filtros DSP paramétricos en tiempo real sobre archivos pre-renderizados y comprimidos de 2012 generaba artefactos acústicos no deseados. La filosofía de audio de Narayan Projects y Audrik Sound Design se basará en el remasterizado directo de assets en el DAW (REAPER / OSARA) con gain staging y limitación True Peak, dejando el código de C# exclusivamente para el posicionamiento y movimiento espacial 3D.
-    - **Resolución**: Retorno total al motor puro y canónico de 2012 sin filtros destructivos, preservando el modelo espacial 3D limpio por objetos (paneo acimutal equal-power, atenuación Dolby y pitch por profundidad natural).
+15. **Fórmula Audrik x Narayan: Reverb 3D y Ducking Dinámico (v1.2.1)**:
+    - **Reverberación de Cuarto Sutil (`BASS_FX_DX8_REVERB`)**: Inyección de una sala acústica ligera (`fInGain = 0f`, `fReverbMix = -12.0f`, `fReverbTime = 450.0f`) que sitúa el tablero físico frente al oyente sin alterar el timbre original ni saturar el techo digital.
+    - **Ducking Musical Limpio por Slide (`BASS_ChannelSlideAttribute`)**: Deslizamiento suave del volumen de la música al 35% en 200 ms durante las locuciones del narrador (*Sweet!*, *Tasty!*, *Divine!*, *Delicious!*) y retorno transparente en 1000 ms tras 1.5s.
+    - **Pureza Acústica Total**: Cero filtros paramétricos aditivos (`PARAMEQ`) y cero desafinación de gravedad, conservando la dinámica y calidad pura de los assets de 2012.
 
 ---
 
@@ -226,7 +227,7 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 | Tipo de Lanzamiento | Cuándo Usarlo | Ejemplo de Etiqueta (Tag) | Ejemplo de Título de Release |
 |---|---|---|---|
-| **Hotfixes / Parches Menores** | Arreglos de sonido, pulido de efectos, textos o bugs | `v1.1.1-08.16.2026`<br>`v1.1.2-08.20.2026` | *Candy Crush Accesible v1.1.1 (Audio Polish)* |
+| **Hotfixes / Parches Menores** | Arreglos de sonido, pulido de efectos, textos o bugs | `v1.1.1-08.16.2026`<br>`v1.2.1-08.24.2026` | *Candy Crush Accesible v1.2.1 (Fórmula Audrik: Reverb 3D y Ducking)* |
 | **Eventos / Contenido Temático** | Niveles especiales (Navidad, Halloween, etc.), nuevos episodios, modos | `v1.2.0-12.24.2026`<br>`v1.3.0-04.05.2027` | *Candy Crush Accesible v1.2.0 (Especial Navideño 🎄)* |
 | **Grandes Expansiones (V2)** | Nuevo motor, multijugador, overhaul gráfico/sonoro | `v2.0.0-08.14.2027` | *Candy Crush Accesible 2.0 (Anniversary Edition)* |
 
@@ -234,18 +235,18 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 1. **Actualizar `CandyCrushAccessible.csproj`**:
    Mantener `<AssemblyVersion>` y `<FileVersion>` limpios en 4 dígitos semánticos (`Mayor.Menor.Parche.0`), evitando años o fechas en estos campos:
    ```xml
-   <Version>1.2.0</Version>
-   <AssemblyVersion>1.2.0.0</AssemblyVersion>
-   <FileVersion>1.2.0.0</FileVersion>
+   <Version>1.2.1</Version>
+   <AssemblyVersion>1.2.1.0</AssemblyVersion>
+   <FileVersion>1.2.1.0</FileVersion>
    ```
 2. **Compilar y Empaquetar Standalone**:
    ```powershell
    & "$env:LOCALAPPDATA\dotnet\dotnet.exe" publish "src\CandyCrushAccessible.csproj" -c Release -o "publish_out"
-   Compress-Archive -Path "publish_out\*" -DestinationPath "CandyCrushAccessible-v1.2.0-Standalone.zip" -Force
+   Compress-Archive -Path "publish_out\*" -DestinationPath "CandyCrushAccessible-v1.2.1-Standalone.zip" -Force
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.2.0-08.24.2026 "CandyCrushAccessible-v1.2.0-Standalone.zip" --title "Candy Crush Accesible v1.2.0" --notes "Notas del parche..."
+   gh release create v1.2.1-08.24.2026 "CandyCrushAccessible-v1.2.1-Standalone.zip" --title "Candy Crush Accesible v1.2.1 (Fórmula Audrik: Reverb 3D y Ducking)" --notes "Notas del parche..."
    ```
 
 ---
@@ -254,9 +255,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`tests/SmokeTest`)**: **ALL TESTS PASSED (100% OK, 0 Errores)**.
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.1-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.1-08.24.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.2.0: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026)
+- Release v1.2.1: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.1-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.1-08.24.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds_legacy\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
