@@ -14,15 +14,6 @@ namespace CandyCrushAccessible.Audio
         private const int BASS_ATTRIB_FREQ = 1;
         private const int BASS_ATTRIB_PAN = 3;
         private const int BASS_SYNC_END = 2;
-        private const int BASS_FX_DX8_PARAMEQ = 8;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct BASS_DX8_PARAMEQ
-        {
-            public float fCenter;
-            public float fBandwidth;
-            public float fGain;
-        }
 
         private const int BaseFreq = 44100;
 
@@ -81,15 +72,6 @@ namespace CandyCrushAccessible.Audio
 
         [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int BASS_ChannelSetSync(int handle, int type, long param, SyncProc proc, IntPtr user);
-
-        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int BASS_ChannelSetFX(int handle, int type, int priority);
-
-        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool BASS_FXSetParameters(int handle, ref BASS_DX8_PARAMEQ par);
-
-        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool BASS_ChannelSlideAttribute(int handle, int attrib, float value, uint time);
 
         public static void Init()
         {
@@ -176,16 +158,10 @@ namespace CandyCrushAccessible.Audio
             }
         }
 
-        /// <summary>
-        /// Audrik Sound Design v2: Ducking nativo y suave sin artefactos de fase.
-        /// Desliza el volumen de la música con BASS_ChannelSlideAttribute en 200ms y lo restaura suavemente en 1000ms.
-        /// </summary>
-        public static void DuckMusic(float duckLevel = 0.35f, int durationMs = 1500)
+        public static void DuckMusic(float duckLevel, int durationMs)
         {
             if (_musicHandle == 0) return;
-            float targetDuckVol = _musicVolume * duckLevel;
-            BASS_ChannelSlideAttribute(_musicHandle, BASS_ATTRIB_VOL, targetDuckVol, 200);
-
+            BASS_ChannelSetAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume * duckLevel);
             if (_duckTimer != null)
             {
                 _duckTimer.Change(durationMs, Timeout.Infinite);
@@ -196,58 +172,10 @@ namespace CandyCrushAccessible.Audio
                 {
                     if (_musicHandle != 0)
                     {
-                        BASS_ChannelSlideAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume, 1000);
+                        BASS_ChannelSetAttribute(_musicHandle, BASS_ATTRIB_VOL, _musicVolume);
                     }
                 }, null, durationMs, Timeout.Infinite);
             }
-        }
-
-        /// <summary>
-        /// Audrik Sound Design v2: Realce ASMR cristalino en agudos (+4dB a 8000Hz) con gain staging.
-        /// Se aplica headroom previo (-3dB / 0.70x) antes del EQ paramétrico para evitar clipping digital.
-        /// </summary>
-        public static void ApplySweetenerEQ(int channel, ref float volume)
-        {
-            try
-            {
-                volume *= 0.70f;
-                int fx = BASS_ChannelSetFX(channel, BASS_FX_DX8_PARAMEQ, 0);
-                if (fx != 0)
-                {
-                    BASS_DX8_PARAMEQ eq = new BASS_DX8_PARAMEQ
-                    {
-                        fCenter = 8000f,
-                        fBandwidth = 18f,
-                        fGain = 4.0f
-                    };
-                    BASS_FXSetParameters(fx, ref eq);
-                }
-            }
-            catch { }
-        }
-
-        /// <summary>
-        /// Audrik Sound Design v2: Realce Low-Punch envolvente (+5dB a 80Hz) con gain staging.
-        /// Se aplica headroom previo (-4dB / 0.65x) para otorgar cuerpo y peso sin saturar el techo digital.
-        /// </summary>
-        public static void ApplyLowPunchEQ(int channel, ref float volume)
-        {
-            try
-            {
-                volume *= 0.65f;
-                int fx = BASS_ChannelSetFX(channel, BASS_FX_DX8_PARAMEQ, 0);
-                if (fx != 0)
-                {
-                    BASS_DX8_PARAMEQ eq = new BASS_DX8_PARAMEQ
-                    {
-                        fCenter = 80f,
-                        fBandwidth = 24f,
-                        fGain = 5.0f
-                    };
-                    BASS_FXSetParameters(fx, ref eq);
-                }
-            }
-            catch { }
         }
 
         public static void PlaySound(string key, int col = -1, int row = -1, double pitch = 1.0, double volumeScale = 1.0)
@@ -262,19 +190,6 @@ namespace CandyCrushAccessible.Audio
 
             double finalPitch = pitch;
             float vol = _sfxVolume * (float)volumeScale;
-
-            // Audrik Sound Design v2: Gain Staging previo + Ecualización paramétrica segura
-            if (key == "candy" || key == "candy2" || key == "candy3" || key == "candy4" ||
-                key == "square" || key == "square2" || key == "jelly" || key == "jelly2" ||
-                key == "frosting1" || key == "frosting2" || key == "striped_created" || key == "nut")
-            {
-                ApplySweetenerEQ(h, ref vol);
-            }
-            else if (key == "bomb" || key == "wrapped_explosion" || key == "colorbomb" ||
-                     key == "supercolorbomb" || key == "sugar" || key == "wrapped_created")
-            {
-                ApplyLowPunchEQ(h, ref vol);
-            }
 
             if (col >= 0 && row >= 0)
             {
@@ -323,9 +238,9 @@ namespace CandyCrushAccessible.Audio
         }
 
         /// <summary>
-        /// Aplica el modelo de audio por objetos (principio Dolby) con la firma Audrik v2:
-        /// calcula paneo por acimut equal-power, atenuación por distancia y una variación
-        /// sutil de tono por gravedad en el eje Y (máx ±2.97%) para conservar transitorios limpios.
+        /// Aplica el modelo de audio por objetos (principio Dolby): calcula paneo por acimut,
+        /// atenuación por distancia y ajuste de tono por profundidad según la posición 3D
+        /// del objeto respecto a un oyente fijo frente al centro del tablero.
         /// </summary>
         private static void ApplyObjectSpatialization(int h, int col, int row, ref double pitch, ref float vol)
         {
@@ -360,10 +275,9 @@ namespace CandyCrushAccessible.Audio
             }
             vol *= att;
 
-            // 3) Audrik Sound Design v2: Tono por profundidad y gravedad sutil y natural (±2.97% máx)
+            // 3) Tono por profundidad: objetos cercanos más brillantes, lejanos más oscuros
             double depthPitch = 1.0 + (ListenerDistance - dist) * DepthPitchFactor;
-            double gravityPitch = 1.0 + (3.5 - row) * 0.0085; // +2.97% arriba a -2.97% abajo
-            pitch *= (depthPitch * gravityPitch);
+            pitch *= depthPitch;
         }
 
         public static void PlayVoice(string key)
@@ -373,12 +287,8 @@ namespace CandyCrushAccessible.Audio
             string path = ContentResolver.SoundPath(file);
             if (path == null) return;
 
-            // Audrik Sound Design v2: Ducking suave de la música por slide (fade-out 200ms, retorno 1000ms a los 1.5s)
-            DuckMusic(0.35f, 1500);
-
             int h = BASS_StreamCreateFile(false, path, 0, 0, BASS_UNICODE);
             if (h == 0) return;
-            // Voz 100% limpia sin ecualizadores ni alteraciones de fase
             BASS_ChannelSetAttribute(h, BASS_ATTRIB_VOL, _voiceVolume);
             BASS_ChannelPlay(h, false);
 
