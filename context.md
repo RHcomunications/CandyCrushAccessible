@@ -212,11 +212,9 @@ src/
       - `colorbomb_created` y `wrapped_created` respaldan en sus SFX auténticos (`colour_bomb_created.wav` y `wrapped_candy_created1.wav`).
       - `bomb`, `wrapped_explosion`, `lineblast` y `sugar` respaldan en sonidos de explosión contundentes (`bomb_sound1.wav`, `line_blast1.wav`, `sugar_crush.wav`).
 
-15. **Implementación de "Audrik Sound Design" (BASS DX8 DSP y Psicoacústica)**:
-    - **Ecualización ASMR Cristalina (`ApplySweetenerEQ`)**: Boost paramétrico nativo de BASS (`BASS_FX_DX8_PARAMEQ`) de +4dB a 8000Hz (ancho de banda 1.5 octavas) aplicado a caramelos, hielo, gelatinas y glaseados para una textura crujiente y aireada.
-    - **Ecualización Low-Punch Envolvente (`ApplyLowPunchEQ`)**: Boost cálido de +5dB a 80Hz (ancho de banda 2.0 octavas) aplicado a detonaciones, bombas de color y combos para un impacto redondo y aterciopelado.
-    - **Ducking Automático para Voces del Locutor**: Atenuación del 40% (a 0.6x de volumen) en música y efectos secundarios durante 1.5s al reproducirse locuciones icónicas (*Sweet!*, *Tasty!*, *Divine!*, *Delicious!*).
-    - **Exageración Física de Gravedad en el `GridSpatializer`**: Curva dinámica de pitch en el eje Y (+12% en Y=0 hasta -12% en Y=7) para transmitir la sensación táctil de peso y aceleración gravitatoria al descender los dulces por el tablero.
+15. **Rollback de Efectos DSP y Retorno a Fidelidad Canónica Pura (v1.2.0)**:
+    - **Diagnóstico**: La inserción de realces paramétricos (+5dB @ 80Hz) sobre los assets masterizados de 2012 provocó saturación digital (*clipping* en bajas frecuencias) y artefactos de fase en las locuciones del narrador, además de desnaturalizar las caídas con la curva de pitch agresiva.
+    - **Resolución**: Retorno total al motor puro y canónico de 2012 sin filtros destructivos, preservando el modelo espacial 3D limpio por objetos (paneo acimutal equal-power, atenuación Dolby y pitch por profundidad natural).
 
 ---
 

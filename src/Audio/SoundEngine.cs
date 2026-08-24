@@ -14,15 +14,6 @@ namespace CandyCrushAccessible.Audio
         private const int BASS_ATTRIB_FREQ = 1;
         private const int BASS_ATTRIB_PAN = 3;
         private const int BASS_SYNC_END = 2;
-        private const int BASS_FX_DX8_PARAMEQ = 8;
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct BASS_DX8_PARAMEQ
-        {
-            public float fCenter;
-            public float fBandwidth;
-            public float fGain;
-        }
 
         private const int BaseFreq = 44100;
 
@@ -81,12 +72,6 @@ namespace CandyCrushAccessible.Audio
 
         [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int BASS_ChannelSetSync(int handle, int type, long param, SyncProc proc, IntPtr user);
-
-        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern int BASS_ChannelSetFX(int handle, int type, int priority);
-
-        [DllImport("bass.dll", CallingConvention = CallingConvention.Cdecl)]
-        private static extern bool BASS_FXSetParameters(int handle, ref BASS_DX8_PARAMEQ par);
 
         public static void Init()
         {
@@ -193,52 +178,6 @@ namespace CandyCrushAccessible.Audio
             }
         }
 
-        /// <summary>
-        /// Audrik Sound Design: Ecualización ASMR cristalina (+4dB a 8000Hz, ancho de banda 1.5 octavas).
-        /// Realza la presencia, el crujido y la textura dulce de caramelos, hielo y gelatinas.
-        /// </summary>
-        public static void ApplySweetenerEQ(int channel)
-        {
-            try
-            {
-                int fx = BASS_ChannelSetFX(channel, BASS_FX_DX8_PARAMEQ, 0);
-                if (fx != 0)
-                {
-                    BASS_DX8_PARAMEQ eq = new BASS_DX8_PARAMEQ
-                    {
-                        fCenter = 8000f,
-                        fBandwidth = 18f,
-                        fGain = 4.0f
-                    };
-                    BASS_FXSetParameters(fx, ref eq);
-                }
-            }
-            catch { }
-        }
-
-        /// <summary>
-        /// Audrik Sound Design: Ecualización Low-Punch envolvente (+5dB a 80Hz, ancho de banda 2.0 octavas).
-        /// Aporta un peso cálido, redondo y cinematográfico a explosiones, bombas de color y combos pesados.
-        /// </summary>
-        public static void ApplyLowPunchEQ(int channel)
-        {
-            try
-            {
-                int fx = BASS_ChannelSetFX(channel, BASS_FX_DX8_PARAMEQ, 0);
-                if (fx != 0)
-                {
-                    BASS_DX8_PARAMEQ eq = new BASS_DX8_PARAMEQ
-                    {
-                        fCenter = 80f,
-                        fBandwidth = 24f,
-                        fGain = 5.0f
-                    };
-                    BASS_FXSetParameters(fx, ref eq);
-                }
-            }
-            catch { }
-        }
-
         public static void PlaySound(string key, int col = -1, int row = -1, double pitch = 1.0, double volumeScale = 1.0)
         {
             if (!_initialized) return;
@@ -248,19 +187,6 @@ namespace CandyCrushAccessible.Audio
 
             int h = BASS_StreamCreateFile(false, path, 0, 0, BASS_UNICODE);
             if (h == 0) return;
-
-            // Audrik Sound Design: Aplicar ecualización dinámica según la naturaleza sonora del objeto
-            if (key == "candy" || key == "candy2" || key == "candy3" || key == "candy4" ||
-                key == "square" || key == "square2" || key == "jelly" || key == "jelly2" ||
-                key == "frosting1" || key == "frosting2" || key == "striped_created" || key == "nut")
-            {
-                ApplySweetenerEQ(h);
-            }
-            else if (key == "bomb" || key == "wrapped_explosion" || key == "colorbomb" ||
-                     key == "supercolorbomb" || key == "sugar" || key == "wrapped_created")
-            {
-                ApplyLowPunchEQ(h);
-            }
 
             double finalPitch = pitch;
             float vol = _sfxVolume * (float)volumeScale;
@@ -312,9 +238,9 @@ namespace CandyCrushAccessible.Audio
         }
 
         /// <summary>
-        /// Aplica el modelo de audio por objetos (principio Dolby) con la firma Audrik:
-        /// calcula paneo por acimut equal-power, atenuación por distancia, y una curva
-        /// de pitch física por gravedad en el eje Y (de agudo arriba a grave abajo).
+        /// Aplica el modelo de audio por objetos (principio Dolby): calcula paneo por acimut,
+        /// atenuación por distancia y ajuste de tono por profundidad según la posición 3D
+        /// del objeto respecto a un oyente fijo frente al centro del tablero.
         /// </summary>
         private static void ApplyObjectSpatialization(int h, int col, int row, ref double pitch, ref float vol)
         {
@@ -349,11 +275,9 @@ namespace CandyCrushAccessible.Audio
             }
             vol *= att;
 
-            // 3) Audrik Sound Design: Tono por profundidad y gravedad física en el eje Y
-            // Curva descendente de gravedad: +12% en Y=0 (superior, ligero) a -12% en Y=7 (fondo, impacto pesado)
+            // 3) Tono por profundidad: objetos cercanos más brillantes, lejanos más oscuros
             double depthPitch = 1.0 + (ListenerDistance - dist) * DepthPitchFactor;
-            double gravityPitchDrop = 1.0 + (3.5 - row) * 0.035;
-            pitch *= (depthPitch * gravityPitchDrop);
+            pitch *= depthPitch;
         }
 
         public static void PlayVoice(string key)
@@ -363,13 +287,8 @@ namespace CandyCrushAccessible.Audio
             string path = ContentResolver.SoundPath(file);
             if (path == null) return;
 
-            // Audrik Sound Design: Ducking del 40% (a 0.6x de volumen) durante 1.5s para resaltar la voz del locutor
-            DuckMusic(0.6f, 1500);
-
             int h = BASS_StreamCreateFile(false, path, 0, 0, BASS_UNICODE);
             if (h == 0) return;
-
-            ApplySweetenerEQ(h);
             BASS_ChannelSetAttribute(h, BASS_ATTRIB_VOL, _voiceVolume);
             BASS_ChannelPlay(h, false);
 
