@@ -18,7 +18,7 @@ namespace CandyCrushVerification
             string[] testSounds = {
                 "candy", "match1", "match12", "striped_created", "wrapped_created",
                 "colorbomb_created", "klubb", "chocolate_grow", "frosting1",
-                "jelly", "win", "lose", "sweet", "delicious", "divine", "sugar"
+                "jelly", "ingredient", "nut", "win", "lose", "sweet", "delicious", "divine", "sugar"
             };
 
             foreach (var key in testSounds)
@@ -41,6 +41,19 @@ namespace CandyCrushVerification
             foreach (MusicTrack track in Enum.GetValues(typeof(MusicTrack)))
             {
                 string f = MusicMap.FileName(track);
+                if (track == MusicTrack.Lose)
+                {
+                    if (f == null)
+                    {
+                        Console.WriteLine("  [OK] Pista: Lose -> Silencio (reproduce SFX level_failed1.wav sin fanfarria invertida)");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"  [ERROR] Pista Lose no deberia tener musica alegre asignada: {f}");
+                        errors++;
+                    }
+                    continue;
+                }
                 string p = ContentResolver.MusicPath(f);
                 if (p == null || !File.Exists(p))
                 {

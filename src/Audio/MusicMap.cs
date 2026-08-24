@@ -6,6 +6,7 @@ namespace CandyCrushAccessible.Audio
     public enum MusicTrack
     {
         Menu,
+        Intro,
         Win,
         Lose,
         ScoreAndJelly,
@@ -21,8 +22,9 @@ namespace CandyCrushAccessible.Audio
             switch (track)
             {
                 case MusicTrack.Menu: return "candy_crush_saga_loop_1";
+                case MusicTrack.Intro: return "candy_crush_intro2";
                 case MusicTrack.Win: return "candy_crush_outro1";
-                case MusicTrack.Lose: return "candy_crush_intro2";
+                case MusicTrack.Lose: return null;
                 case MusicTrack.ScoreAndJelly: return "candy_crush_loop5";
                 case MusicTrack.Order: return "candy_crush_soundtrack2";
                 case MusicTrack.Timed: return "candy_crush_soundtrack3";

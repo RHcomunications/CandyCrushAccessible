@@ -95,7 +95,7 @@
 <body>
 
     <h1>🍬 Candy Crush Accesible (Español &amp; English)</h1>
-    <p class="subtitle">Versión <strong>v1.1.9</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
+    <p class="subtitle">Versión <strong>v1.2.0</strong> · Edición Oficial 2012 con Audio Binaural 3D</p>
 
     <div class="feature-box lang-index" style="text-align:center;">
         <p><a href="#es">🇪🇸 Manual en Español</a> &nbsp;·&nbsp; <a href="#en">🇬🇧 English User Guide</a></p>
@@ -214,6 +214,13 @@
 
     <h3>📝 Historial de Versiones</h3>
     <ul>
+        <li><strong>v1.2.0 (24 de Agosto de 2026)</strong> — <strong>Corrección Integral de Fidelidad Sonora y Mapeo de Audio</strong>:
+            <ul>
+                <li><strong>Pista de Derrota Auténtica</strong>: Corregida la pista de derrota en <code>MusicMap.cs</code> (se eliminó la fanfarria alegre de intro <em>candy_crush_intro2</em> que sonaba al perder, silenciando la música y reproduciendo únicamente el SFX auténtico <em>level_failed1.wav</em>).</li>
+                <li><strong>Efectos de Ingredientes Auténticos</strong>: Las claves <code>ingredient</code>, <code>ingredient2</code> y <code>nut</code> ahora apuntan directamente a <em>nut_out1.wav</em> (sonido original de 2012 al recolectar ingredientes), reubicando <em>all_aboard1.wav</em> y <em>tickets_please1.wav</em> a locuciones del mapa.</li>
+                <li><strong>Fallbacks Fidedignos en <code>AudioMap</code></strong>: Resultados de nivel (<code>win</code>/<code>lose</code>), combos (<code>match1</code> a <code>match12</code> con escala de tonos ascendente), creación de especiales (<code>colorbomb_created</code>, <code>wrapped_created</code>) y explosiones (<code>bomb</code>, <code>lineblast</code>, <code>sugar</code>) respaldan en sus archivos correspondientes de audio fidedignos.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.9 (19 de Agosto de 2026)</strong> — <strong>Panel de Desarrollo Exclusivo DEBUG y Bono Diario Verificable</strong>:
             <ul>
                 <li><strong>Maxear Todo (solo desarrollo)</strong>: Nueva opción al final del menú de Opciones, visible únicamente en compilaciones DEBUG. Concede 9999 lingotes, 99999 monedas, 99 vidas, 50 de cada potenciador, todos los niveles desbloqueados y el bono diario disponible de nuevo.</li>
@@ -429,6 +436,13 @@
 
     <h3>📝 Version History</h3>
     <ul>
+        <li><strong>v1.2.0 (August 24, 2026)</strong> — <strong>Complete Audio Fidelity &amp; Sound Mapping Overhaul</strong>:
+            <ul>
+                <li><strong>Authentic Defeat Audio</strong>: Corrected lose track in <code>MusicMap.cs</code> by removing the upbeat <em>candy_crush_intro2</em> level start fanfare upon losing; the engine now immediately stops music and plays only the authentic defeat SFX <em>level_failed1.wav</em>.</li>
+                <li><strong>Authentic Ingredient SFX</strong>: Re-anchored <code>ingredient</code>, <code>ingredient2</code>, and <code>nut</code> to <em>nut_out1.wav</em> (the authentic King sound for collecting nuts and cherries), reassigning <em>all_aboard1.wav</em> and <em>tickets_please1.wav</em> to map voice keys.</li>
+                <li><strong>Faithful Fallbacks in <code>AudioMap</code></strong>: Level results (<code>win</code>/<code>lose</code>), combos (<code>match1</code> to <code>match12</code> ascending pitch progression), special creations (<code>colorbomb_created</code>, <code>wrapped_created</code>), and destructive explosions (<code>bomb</code>, <code>lineblast</code>, <code>sugar</code>) now fall back to their corresponding authentic sounds.</li>
+            </ul>
+        </li>
         <li><strong>v1.1.9 (August 19, 2026)</strong> — <strong>DEBUG-Only Dev Panel and Verifiable Daily Bonus</strong>:
             <ul>
                 <li><strong>Max Everything (dev only)</strong>: New option at the end of the Options menu, visible only in DEBUG builds. Grants 9999 gold bars, 99999 coins, 99 lives, 50 of each booster, all levels unlocked and the daily bonus available again.</li>

@@ -14,9 +14,9 @@
     <Company>Narayan Projects</Company>
     <Product>Candy Crush Accesible</Product>
     <Description>Clon 100% accesible de Candy Crush Saga (Edición 2012) con audio binaural.</Description>
-    <Version>1.1.9</Version>
-    <AssemblyVersion>1.1.9.0</AssemblyVersion>
-    <FileVersion>1.1.9.0</FileVersion>
+    <Version>1.2.0</Version>
+    <AssemblyVersion>1.2.0.0</AssemblyVersion>
+    <FileVersion>1.2.0.0</FileVersion>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
   </PropertyGroup>

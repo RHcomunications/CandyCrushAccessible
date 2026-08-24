@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.1.9 Lanzamiento Oficial (19 de Agosto de 2026)  
+**Versión:** v1.2.0 Lanzamiento Oficial (24 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.1.9-08.19.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.2.0-08.24.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -203,6 +203,15 @@ src/
     - **Diagnóstico**: En Windows PowerShell 5.1, `[System.IO.Compression.ZipFile]::ExtractToDirectory(zip, dir, $true)` fallaba intentando convertir `$true` a `System.Text.Encoding` al no disponer de la sobrecarga de 3 parámetros de .NET Core.
     - **Solución Blindada**: Migración a `tar.exe -xf` nativo de Windows (estándar en Windows 10/11) con fallback automático y seguro a `Expand-Archive -LiteralPath -Force`, garantizando extracción atómica y reinicio perfecto sin bloqueos ni errores.
 
+14. **Corrección Integral de Fidelidad Sonora y Mapeo de Audio (v1.2.0)**:
+    - **Pista de Derrota Auténtica**: Corregida la pista de derrota en `MusicMap.cs` (eliminada la fanfarria alegre de intro `candy_crush_intro2` que sonaba al perder, silenciando la música para reproducir únicamente el SFX de derrota `level_failed1.wav`).
+    - **Efectos de Ingredientes Auténticos**: Las claves `ingredient`, `ingredient2` y `nut` ahora apuntan a `nut_out1.wav` (el sonido original de King al recolectar ingredientes), reubicando `all_aboard1.wav` y `tickets_please1.wav` a locuciones del mapa.
+    - **Fallbacks Fidedignos en `AudioMap.cs`**:
+      - `win` y `lose` respaldan en `level_completed.wav` y `level_failed1.wav` (erradicado el clic genérico de botón).
+      - `match1` a `match12` respaldan en sus respectivos `combo_sound1.wav` a `combo_sound12.wav`, preservando la escala tonal musical ascendente de accesibilidad.
+      - `colorbomb_created` y `wrapped_created` respaldan en sus SFX auténticos (`colour_bomb_created.wav` y `wrapped_candy_created1.wav`).
+      - `bomb`, `wrapped_explosion`, `lineblast` y `sugar` respaldan en sonidos de explosión contundentes (`bomb_sound1.wav`, `line_blast1.wav`, `sugar_crush.wav`).
+
 ---
 
 ## Regla de Oro: Esquema Oficial de Versionado Semántico (SemVer) y Despliegues
@@ -232,7 +241,7 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
    ```
 3. **Publicar en GitHub Release**:
    ```powershell
-   gh release create v1.1.6-08.16.2026 "CandyCrushAccessible-v1.1.6-Standalone.zip" --title "Candy Crush Accesible v1.1.6" --notes "Notas del parche..."
+   gh release create v1.2.0-08.24.2026 "CandyCrushAccessible-v1.2.0-Standalone.zip" --title "Candy Crush Accesible v1.2.0" --notes "Notas del parche..."
    ```
 
 ---
@@ -241,9 +250,9 @@ Para todas las versiones futuras (parches de sonido, correcciones, eventos festi
 
 - **Tests Automatizados (`tests/SmokeTest`)**: **ALL TESTS PASSED (100% OK, 0 Errores)**.
 - **Compilaciones**: Debug y Release OK (0 Errores, 0 Advertencias).
-- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.9-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.9-08.19.2026)
+- **GitHub Release**: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026)
 ## Contacto / Referencias
 - Repo GitHub: [https://github.com/RHcomunications/CandyCrushAccessible](https://github.com/RHcomunications/CandyCrushAccessible)
-- Release v1.1.9: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.9-08.19.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.1.9-08.19.2026)
+- Release v1.2.0: [https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026](https://github.com/RHcomunications/CandyCrushAccessible/releases/tag/v1.2.0-08.24.2026)
 - Audio assets: `C:\Users\artik\Downloads\candy crush\sounds_legacy\`
 - Save usuario: `%APPDATA%\CandyCrushAccessible\candycrush_progress.json`
