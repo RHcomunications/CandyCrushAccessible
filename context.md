@@ -212,9 +212,10 @@ src/
       - `colorbomb_created` y `wrapped_created` respaldan en sus SFX auténticos (`colour_bomb_created.wav` y `wrapped_candy_created1.wav`).
       - `bomb`, `wrapped_explosion`, `lineblast` y `sugar` respaldan en sonidos de explosión contundentes (`bomb_sound1.wav`, `line_blast1.wav`, `sugar_crush.wav`).
 
-15. **Rollback de Efectos DSP y Retorno a Fidelidad Canónica Pura (v1.2.0)**:
-    - **Diagnóstico**: La inserción de realces paramétricos (+5dB @ 80Hz) sobre los assets masterizados de 2012 provocó saturación digital (*clipping* en bajas frecuencias) y artefactos de fase en las locuciones del narrador, además de desnaturalizar las caídas con la curva de pitch agresiva.
-    - **Resolución**: Retorno total al motor puro y canónico de 2012 sin filtros destructivos, preservando el modelo espacial 3D limpio por objetos (paneo acimutal equal-power, atenuación Dolby y pitch por profundidad natural).
+15. **Audrik Sound Design v2 (Headroom Gain Staging y Ducking por Slide)**:
+    - **Headroom Gain Staging (Cero Clipping)**: Reducción previa de ganancia en el canal (-3dB a 0.70x para agudos y -4dB a 0.65x para graves) antes de aplicar los realces de `BASS_FX_DX8_PARAMEQ`, garantizando que ni el crujido ASMR (+4dB @ 8000Hz) ni el golpe Low-Punch (+5dB @ 80Hz) toquen el techo digital de 0dBFS.
+    - **Ducking Limpio por Slide (`BASS_ChannelSlideAttribute`)**: Atenuación suave de la música a 0.35x en 200ms y restauración progresiva en 1000ms a los 1.5s, manteniendo la señal de las voces 100% limpia sin desfases ni filtros espurios.
+    - **Gravedad Acústica Realista (Eje Y)**: Variación sutil y controlada de tono de un máximo absoluto de ±2.97% entre Y=0 y Y=7, proporcionando una sensación física de descenso sin alterar los transitorios ni la afinación musical.
 
 ---
 
