@@ -20,12 +20,7 @@ namespace CandyCrushAccessible.Audio
                 Path.Combine(exeDir, "..", "sounds_legacy"),
                 Path.Combine(exeDir, "..", "..", "sounds_legacy"),
                 Path.Combine(exeDir, "..", "..", "..", "sounds_legacy"),
-                Path.Combine(Directory.GetCurrentDirectory(), "sounds_legacy"),
-                Path.Combine(exeDir, "sounds"),
-                Path.Combine(exeDir, "..", "sounds"),
-                Path.Combine(exeDir, "..", "..", "sounds"),
-                Path.Combine(exeDir, "..", "..", "..", "sounds"),
-                Path.Combine(Directory.GetCurrentDirectory(), "sounds")
+                Path.Combine(Directory.GetCurrentDirectory(), "sounds_legacy")
             };
             foreach (string c in legacyCandidates)
             {
@@ -33,32 +28,12 @@ namespace CandyCrushAccessible.Audio
                 {
                     SoundsLegacyDir = Path.GetFullPath(c);
                     SoundsDir = SoundsLegacyDir;
+                    MusicDir = SoundsLegacyDir;
                     break;
                 }
             }
 
-            string[] musicCandidates = {
-                Path.Combine(exeDir, "sounds_legacy"),
-                Path.Combine(exeDir, "..", "sounds_legacy"),
-                Path.Combine(exeDir, "..", "..", "sounds_legacy"),
-                Path.Combine(exeDir, "..", "..", "..", "sounds_legacy"),
-                Path.Combine(Directory.GetCurrentDirectory(), "sounds_legacy"),
-                Path.Combine(exeDir, "music"),
-                Path.Combine(exeDir, "..", "music"),
-                Path.Combine(exeDir, "..", "..", "music"),
-                Path.Combine(exeDir, "..", "..", "..", "music"),
-                Path.Combine(Directory.GetCurrentDirectory(), "music")
-            };
-            foreach (string c in musicCandidates)
-            {
-                if (Directory.Exists(c))
-                {
-                    MusicDir = Path.GetFullPath(c);
-                    break;
-                }
-            }
-
-            if (string.IsNullOrEmpty(SoundsDir) || string.IsNullOrEmpty(MusicDir))
+            if (string.IsNullOrEmpty(SoundsLegacyDir))
             {
                 ExtractEmbeddedAssets();
             }
@@ -75,13 +50,10 @@ namespace CandyCrushAccessible.Audio
                 string[] names = asm.GetManifestResourceNames();
                 foreach (string name in names)
                 {
-                    string sub = null;
-                    string marker = null;
-                    if (name.Contains(".sounds.")) { sub = "sounds_legacy"; marker = ".sounds."; }
-                    else if (name.Contains(".music.")) { sub = "music"; marker = ".music."; }
-                    else continue;
+                    string marker = ".sounds.";
+                    if (!name.Contains(marker)) continue;
                     string rel = name.Substring(name.IndexOf(marker) + marker.Length);
-                    string dir = Path.Combine(assetRoot, sub);
+                    string dir = Path.Combine(assetRoot, "sounds_legacy");
                     Directory.CreateDirectory(dir);
                     string dest = Path.Combine(dir, rel);
                     if (File.Exists(dest)) continue;
@@ -95,13 +67,12 @@ namespace CandyCrushAccessible.Audio
                     }
                 }
                 string sd = Path.Combine(assetRoot, "sounds_legacy");
-                string md = Path.Combine(assetRoot, "music");
                 if (Directory.Exists(sd))
                 {
                     SoundsLegacyDir = sd;
                     SoundsDir = sd;
+                    MusicDir = sd;
                 }
-                if (Directory.Exists(md)) MusicDir = md;
             }
             catch
             {
@@ -135,11 +106,6 @@ namespace CandyCrushAccessible.Audio
                         string p = Path.Combine(SoundsLegacyDir, candidate);
                         if (File.Exists(p)) return p;
                     }
-                    if (!string.IsNullOrEmpty(SoundsDir))
-                    {
-                        string p2 = Path.Combine(SoundsDir, candidate);
-                        if (File.Exists(p2)) return p2;
-                    }
                 }
             }
 
@@ -172,16 +138,6 @@ namespace CandyCrushAccessible.Audio
                     {
                         string p = Path.Combine(SoundsLegacyDir, candidate);
                         if (File.Exists(p)) return p;
-                    }
-                    if (!string.IsNullOrEmpty(MusicDir))
-                    {
-                        string p2 = Path.Combine(MusicDir, candidate);
-                        if (File.Exists(p2)) return p2;
-                    }
-                    if (!string.IsNullOrEmpty(SoundsDir))
-                    {
-                        string p3 = Path.Combine(SoundsDir, candidate);
-                        if (File.Exists(p3)) return p3;
                     }
                 }
             }

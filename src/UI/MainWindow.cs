@@ -1205,17 +1205,14 @@ namespace CandyCrushAccessible.UI
 
         private void HandleWin()
         {
-            SoundEngine.PlaySound("win");
-            SoundEngine.PlayMusic(MusicTrack.Win, loop: false);
             int moves = _board.MovesLeft;
             if (moves > 0)
             {
                 TurnResult sc = _board.SugarCrush(moves);
-                if (sc.SugarCrushMoves > 0 || sc.ActivationsDetailed.Count > 0)
-                {
-                    SoundEngine.PlaySugarCrushSequence(sc);
-                }
+                SoundEngine.PlaySugarCrushSequence(sc);
             }
+            SoundEngine.PlaySound("win");
+            SoundEngine.PlayMusic(MusicTrack.Win, loop: false);
             int stars = _board.StarsEarned;
             _progress.RecordResult(_levelNumber, _board.Score, stars);
             _progress.AwardLevelCompletion(stars);

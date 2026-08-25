@@ -4,10 +4,10 @@
 
 **Proyecto:** Versión accesible de Candy Crush Saga 2012 (C#/.NET 8 + BASS + NVDA/SAPI)  
 **Estudio / Publisher:** Narayan Projects / RHcomunications  
-**Versión:** v1.2.1 Lanzamiento Oficial (24 de Agosto de 2026)  
+**Versión:** v1.2.2 Lanzamiento Oficial (25 de Agosto de 2026)  
 **Idiomas:** Español / Inglés (Localización completa)  
 **Accesibilidad:** 100% jugable sin visión (screen reader, audio binaural 3D, navegación por teclado, actualizador OTA nativo automático y manual, panel táctico de potenciadores, manual README.html)  
-**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.2.1-08.24.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
+**Estado:** Lanzamiento Oficial publicado en GitHub Release v1.2.2-08.25.2026 (`RHcomunications/CandyCrushAccessible`), 0 errores, 0 advertencias, 100% tests en verde.
 
 ---
 
@@ -216,6 +216,12 @@ src/
     - **Reverberación de Cuarto Sutil (`BASS_FX_DX8_REVERB`)**: Inyección de una sala acústica ligera (`fInGain = 0f`, `fReverbMix = -12.0f`, `fReverbTime = 450.0f`) que sitúa el tablero físico frente al oyente sin alterar el timbre original ni saturar el techo digital.
     - **Ducking Musical Limpio por Slide (`BASS_ChannelSlideAttribute`)**: Deslizamiento suave del volumen de la música al 35% en 200 ms durante las locuciones del narrador (*Sweet!*, *Tasty!*, *Divine!*, *Delicious!*) y retorno transparente en 1000 ms tras 1.5s.
     - **Pureza Acústica Total**: Cero filtros paramétricos aditivos (`PARAMEQ`) y cero desafinación de gravedad, conservando la dinámica y calidad pura de los assets de 2012.
+
+16. **Perfeccionamiento de Audio Canónico, Derrota y Sugar Crush (v1.2.2 - 25 de Agosto de 2026)**:
+    - **Pista de Derrota (`candy_crush_intro2.ogg`)**: Asignación fidedigna de `candy_crush_intro2.ogg` a `MusicTrack.Lose` en `MusicMap.cs`, reproduciendo el tema clásico tras la pantalla de derrota.
+    - **Sugar Crush con Locución Garantizada (`sugar_crush.wav`)**: Al ganar un nivel con movimientos sobrantes (`moves > 0`), `HandleWin()` en `MainWindow.cs` dispara `PlaySugarCrushSequence()` asegurando la reproducción de `sugar_crush.wav` a volumen pleno antes de la cascada de caramelos especiales.
+    - **Resolución Exclusiva `sounds_legacy/`**: Depuración completa de `ContentResolver.cs` y `CandyCrushAccessible.csproj` para operar exclusivamente desde la carpeta `sounds_legacy/`, eliminando dependencias de carpetas secundarias y borrando la carpeta redundante `sounds/`.
+    - **Rescate y Compatibilidad con Métodos de v1.1**: Reincorporación de `GameplayTracks`, `EpisodeFileName` y `MusicTrack.Gameplay` en `MusicMap.cs` para interoperabilidad total.
 
 ---
 

@@ -431,7 +431,7 @@ namespace CandyCrushAccessible.Audio
 
         public static void PlaySugarCrushSequence(TurnResult result)
         {
-            PlaySound("sugar");
+            PlaySound("sugar", -1, -1, 1.0, 1.5);
             if (result == null || result.ActivationsDetailed.Count == 0)
             {
                 int n = Math.Max(1, Math.Min(result != null ? result.SugarCrushMoves : 5, 12));
